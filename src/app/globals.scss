@@ -1,31 +1,48 @@
 @use "tailwindcss";
 
-// LeadForge — Origami.chat Inspired Dark Mode SCSS Architecture
+// LeadForge — 100% Exact Origami.chat SCSS Theme Architecture
 
-$bg-dark: #0b0b10;
-$sidebar-bg: #0e0e15;
-$card-bg: #14141e;
-$card-hover: #1b1b28;
-$border-color: rgba(255, 255, 255, 0.07);
-$accent-rose: #f43f5e;
-$accent-rose-glow: rgba(244, 63, 94, 0.25);
-$accent-violet: #8b5cf6;
-$text-primary: #ffffff;
-$text-secondary: rgba(255, 255, 255, 0.7);
-$text-muted: rgba(255, 255, 255, 0.4);
+$bg-dark: #0d0d12;
+$sidebar-dark: #111118;
+$card-dark: #161622;
+$card-hover-dark: #1c1c2b;
+$border-dark: rgba(255, 255, 255, 0.08);
+
+$bg-light: #f8f8fb;
+$sidebar-light: #f1f1f6;
+$card-light: #ffffff;
+$border-light: rgba(0, 0, 0, 0.08);
+
+$origami-pink: #e60067;
+$origami-rose: #f43f5e;
+$origami-pink-glow: rgba(230, 0, 103, 0.25);
 
 :root {
-  --bg-dark: #{$bg-dark};
-  --sidebar-bg: #{$sidebar-bg};
-  --card-bg: #{$card-bg};
-  --accent-rose: #{$accent-rose};
+  --bg: #{$bg-dark};
+  --sidebar-bg: #{$sidebar-dark};
+  --card-bg: #{$card-dark};
+  --border: #{$border-dark};
+  --pink: #{$origami-rose};
+}
+
+.theme-light {
+  --bg: #{$bg-light};
+  --sidebar-bg: #{$sidebar-light};
+  --card-bg: #{$card-light};
+  --border: #{$border-light};
+  --pink: #{$origami-pink};
 }
 
 body {
-  background-color: $bg-dark;
-  color: $text-primary;
+  background-color: var(--bg);
+  color: #ffffff;
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.theme-light body {
+  color: #1a1a24;
 }
 
 /* Custom Scrollbar */
@@ -34,45 +51,55 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: $bg-dark;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 999px;
   &:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.3);
   }
 }
 
-/* Origami Chat Command Box */
-.origami-prompt-box {
-  background: $card-bg;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.25rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
-  transition: all 0.2s ease-in-out;
+/* Origami Chat Command Prompt Box */
+.origami-chat-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:focus-within {
-    border-color: rgba(244, 63, 94, 0.5);
-    box-shadow: 0 0 25px $accent-rose-glow;
+    border-color: rgba(244, 63, 94, 0.6);
+    box-shadow: 0 0 30px $origami-pink-glow;
   }
 }
 
-/* Origami Action Chips */
-.origami-chip {
+/* Origami Quick Action Chips */
+.origami-action-chip {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: 9999px;
-  color: $text-secondary;
   font-size: 0.8125rem;
-  padding: 0.4rem 0.9rem;
-  transition: all 0.2s ease;
+  font-weight: 500;
+  padding: 0.45rem 1rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 
   &:hover {
-    background: rgba(244, 63, 94, 0.12);
-    border-color: rgba(244, 63, 94, 0.3);
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
     color: #ffffff;
-    transform: translateY(-1px);
+    transform: translateY(-1.5px);
   }
+}
+
+/* Origami Crane Logo Animation */
+@keyframes origamiFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+.origami-logo-crane {
+  animation: origamiFloat 4s ease-in-out infinite;
 }

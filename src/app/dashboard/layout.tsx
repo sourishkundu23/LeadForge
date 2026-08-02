@@ -8,57 +8,61 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<"outbound" | "content">("outbound");
   const [isSequencingOpen, setIsSequencingOpen] = useState(true);
+  const [isMaintenanceDismissed, setIsMaintenanceDismissed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0b0b10] flex text-white font-[family-name:var(--font-inter)] selection:bg-rose-500/30 selection:text-rose-200">
-      {/* Origami Dark Sidebar */}
-      <aside className="w-64 border-r border-white/5 bg-[#0e0e15] flex flex-col justify-between p-4 flex-shrink-0 select-none">
+    <div className="min-h-screen bg-[#0d0d12] flex text-white font-[family-name:var(--font-inter)] selection:bg-rose-500/30 selection:text-rose-200">
+      {/* Origami Left Sidebar */}
+      <aside className="w-64 border-r border-white/5 bg-[#111118] flex flex-col justify-between p-4 flex-shrink-0 select-none">
         <div className="space-y-4">
-          {/* Workspace Switcher */}
-          <div className="flex items-center justify-between px-2 py-1 cursor-pointer hover:bg-white/5 rounded-lg transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-xs font-bold">
-                P
+          {/* Workspace Selector */}
+          <div className="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-white/5 rounded-xl transition-colors">
+            <div className="flex items-center gap-2.5">
+              {/* Origami Pink Crane Logo */}
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-md shadow-rose-500/20 origami-logo-crane">
+                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
               </div>
-              <span className="text-sm font-semibold text-white/90">Personal</span>
+              <span className="text-sm font-semibold text-white">Personal</span>
             </div>
-            <span className="text-white/40 text-xs">▾</span>
+            <span className="text-white/40 text-xs font-mono">▾</span>
           </div>
 
-          {/* Outbound / Content Pill Switcher */}
-          <div className="bg-[#14141d] p-1 rounded-xl flex border border-white/5">
+          {/* Segmented Control Switcher: Outbound | Content */}
+          <div className="bg-[#161622] p-1 rounded-xl flex border border-white/5 shadow-inner">
             <button
               onClick={() => setActiveTab("outbound")}
-              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "outbound"
-                  ? "bg-[#1f1f2e] text-white shadow-sm border border-white/5 font-semibold"
-                  : "text-white/50 hover:text-white"
+                  ? "bg-[#202030] text-white shadow-sm border border-white/10"
+                  : "text-white/40 hover:text-white"
               }`}
             >
               <span>🚀</span> Outbound
             </button>
             <button
               onClick={() => setActiveTab("content")}
-              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "content"
-                  ? "bg-[#1f1f2e] text-white shadow-sm border border-white/5 font-semibold"
-                  : "text-white/50 hover:text-white"
+                  ? "bg-[#202030] text-white shadow-sm border border-white/10"
+                  : "text-white/40 hover:text-white"
               }`}
             >
               <span>📝</span> Content
             </button>
           </div>
 
-          {/* Primary CTA: + New Scrape Job / Chat */}
+          {/* + New Chat / Scrape Button */}
           <Link
             href="/dashboard/new"
-            className="w-full flex items-center justify-center gap-2 bg-[#171722] hover:bg-[#1e1e2d] text-white font-medium py-2.5 px-4 rounded-xl border border-white/10 text-sm transition-all shadow-md group hover:border-rose-500/40"
+            className="w-full flex items-center justify-center gap-2 bg-[#1b1b28] hover:bg-[#232334] text-white font-semibold py-2.5 px-4 rounded-xl border border-white/10 text-sm transition-all shadow-md group hover:border-rose-500/40"
           >
-            <span className="text-rose-400 group-hover:scale-110 transition-transform">⊕</span>
-            <span>New Scrape Job</span>
+            <span className="text-rose-400 group-hover:scale-110 transition-transform text-base">+</span>
+            <span>New chat</span>
           </Link>
 
-          {/* Origami Navigation Links */}
+          {/* Origami Navigation Items */}
           <nav className="space-y-1 pt-2">
             <Link
               href="/dashboard/leads"
@@ -69,8 +73,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <span>💬</span> All Scrapes
+                <span className="text-sm">💬</span> All chats
               </div>
+              <span className="bg-white/10 text-white/50 text-[10px] px-1.5 py-0.5 rounded-full font-mono">12</span>
             </Link>
 
             <Link
@@ -82,7 +87,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <span>🧠</span> Scheduled Signals
+                <span className="text-sm">🕒</span> Scheduled
               </div>
             </Link>
 
@@ -93,7 +98,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:bg-white/5 hover:text-white transition-all"
               >
                 <div className="flex items-center gap-2.5">
-                  <span>⚡</span> Sequencing
+                  <span className="text-sm">⚡</span> Sequencing
                 </div>
                 <span className="text-[10px] text-white/40">{isSequencingOpen ? "▾" : "▸"}</span>
               </button>
@@ -132,19 +137,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </nav>
         </div>
 
-        {/* Origami Bottom Section */}
+        {/* Origami Bottom Navigation Section */}
         <div className="space-y-3 border-t border-white/5 pt-4">
           <div className="px-2">
-            <span className="text-[10px] uppercase font-bold text-white/30 tracking-wider">Your Recent Chats</span>
+            <span className="text-[10px] uppercase font-bold text-white/30 tracking-wider">Your Recent Chats ▾</span>
           </div>
 
-          <div className="bg-[#14141d] border border-white/5 rounded-xl p-3 space-y-2">
+          <div className="bg-[#161622] border border-white/5 rounded-xl p-3 space-y-2">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-medium text-white/80">Smakg Growth Plays</span>
-              <span className="text-white/40 text-[11px]">0/5</span>
+              <span className="font-semibold text-white/90">Smakg Growth Plays</span>
+            </div>
+            <div className="flex justify-between items-center text-[11px] text-white/50">
+              <span>Get started</span>
+              <span className="font-mono text-white/40">0/5</span>
             </div>
             <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
-              <div className="bg-rose-500 h-full w-[20%]" />
+              <div className="bg-rose-500 h-full w-[15%]" />
             </div>
           </div>
 
@@ -166,23 +174,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-xs font-bold text-white shadow-md">
                 S
               </div>
-              <span className="text-xs font-semibold text-white/90">Sourish Kundu</span>
+              <span className="text-xs font-semibold text-white">Sourish Kundu</span>
             </div>
-            <span className="text-white/30 text-xs">🔒</span>
+            <span className="text-white/30 text-xs cursor-pointer hover:text-white">🔒</span>
           </div>
         </div>
       </aside>
 
-      {/* Main Content Viewport */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#0b0b10]">
-        {/* Origami Top Announcement & Header */}
-        <div className="bg-gradient-to-r from-rose-950/20 via-pink-950/20 to-purple-950/20 border-b border-rose-500/10 px-6 py-2 flex items-center justify-between text-xs text-rose-300">
-          <div className="flex items-center gap-2 mx-auto">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span>We&apos;re planning to conduct scheduled maintenance on August 1st between 8am and 5pm Pacific Time</span>
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#0d0d12]">
+        {/* Yellow/Rose Announcement Banner */}
+        {!isMaintenanceDismissed && (
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-2 flex items-center justify-between text-xs text-amber-300">
+            <div className="flex items-center gap-2 mx-auto">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span>We&apos;re planning to conduct scheduled maintenance on August 1st (Saturday) between 8am and 5pm Pacific Time</span>
+            </div>
+            <button
+              onClick={() => setIsMaintenanceDismissed(true)}
+              className="text-amber-400/60 hover:text-amber-200 transition-colors"
+            >
+              ✕
+            </button>
           </div>
-          <span className="text-white/40 hover:text-white cursor-pointer">✕</span>
-        </div>
+        )}
 
         <header className="px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2 text-xs text-white/40">
@@ -196,7 +211,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </header>
 
-        <div className="p-8 max-w-6xl w-full mx-auto">{children}</div>
+        <div className="p-8 max-w-5xl w-full mx-auto">{children}</div>
       </main>
     </div>
   );
