@@ -57,22 +57,25 @@ export default function NewScrapeJobPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Launch New AI Scrape Job</h1>
-        <p className="text-sm text-white/60">
+        <h1 className="text-2xl font-bold text-[var(--text-main)] mb-1">Launch New AI Scrape Job</h1>
+        <p className="text-sm text-[var(--text-sub)]">
           Target leads across LinkedIn, Instagram, or Twitter/X with real-time 1536-dim RAG ICP enrichment.
         </p>
       </div>
 
       {errorMessage && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-sm">
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm flex items-center gap-2">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
           {errorMessage}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-[#12121a] border border-white/5 rounded-2xl p-8 space-y-6 shadow-xl">
+      <form onSubmit={handleSubmit} className="origami-card p-8 space-y-6">
         {/* Platform Selection */}
         <div>
-          <label className="block text-xs font-semibold uppercase text-white/50 mb-3 tracking-wider">
+          <label className="block text-xs font-semibold uppercase text-[var(--text-muted)] mb-3 tracking-wider">
             1. Select Target Platform
           </label>
           <div className="grid grid-cols-3 gap-4">
@@ -96,8 +99,8 @@ export default function NewScrapeJobPage() {
               {
                 id: "twitter",
                 name: "Twitter / X",
-                color: "text-white",
-                bgColor: "bg-white/10",
+                color: "text-[var(--text-main)]",
+                bgColor: "bg-[var(--badge-bg)]",
                 badge: "Public Signals",
                 Icon: TwitterXIcon,
               },
@@ -109,10 +112,10 @@ export default function NewScrapeJobPage() {
                   key={p.id}
                   type="button"
                   onClick={() => setPlatform(p.id as "instagram" | "linkedin" | "twitter")}
-                  className={`p-5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
+                  className={`p-5 rounded-xl border text-left transition-all relative flex flex-col justify-between ${
                     isSelected
-                      ? "bg-violet-600/15 border-violet-500 text-white shadow-xl shadow-violet-500/10 ring-1 ring-violet-500/50"
-                      : "bg-white/[0.02] border-white/5 text-white/70 hover:border-white/20 hover:text-white hover:bg-white/[0.04]"
+                      ? "bg-[var(--pink-soft)] border-[var(--pink)] shadow-sm"
+                      : "bg-[var(--card-bg)] border-[var(--border)] hover:border-[var(--border-hover)] hover:shadow-sm"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -120,12 +123,12 @@ export default function NewScrapeJobPage() {
                       <IconComponent className="w-6 h-6" />
                     </div>
                     {isSelected && (
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[var(--pink)] animate-pulse" />
                     )}
                   </div>
                   <div>
-                    <span className="font-bold text-base block text-white">{p.name}</span>
-                    <span className="text-[11px] text-violet-400 font-mono mt-0.5 block font-semibold">{p.badge}</span>
+                    <span className="font-bold text-base block text-[var(--text-main)]">{p.name}</span>
+                    <span className="text-[11px] text-[var(--pink)] font-mono mt-0.5 block font-medium">{p.badge}</span>
                   </div>
                 </button>
               );
@@ -135,7 +138,7 @@ export default function NewScrapeJobPage() {
 
         {/* Search Type Selection */}
         <div>
-          <label className="block text-xs font-semibold uppercase text-white/50 mb-2.5 tracking-wider">
+          <label className="block text-xs font-semibold uppercase text-[var(--text-muted)] mb-2.5 tracking-wider">
             2. Search Type
           </label>
           <div className="flex flex-wrap gap-2">
@@ -149,10 +152,10 @@ export default function NewScrapeJobPage() {
                 key={st.id}
                 type="button"
                 onClick={() => setSearchType(st.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${
+                className={`px-4 py-2 rounded-lg text-xs font-medium border transition-all ${
                   searchType === st.id
-                    ? "bg-violet-600 text-white border-violet-500 shadow-md shadow-violet-500/20"
-                    : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+                    ? "bg-[var(--pink)] text-white border-[var(--pink)] shadow-sm"
+                    : "bg-[var(--card-bg)] border-[var(--border)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--border-hover)]"
                 }`}
               >
                 {st.label}
@@ -164,25 +167,25 @@ export default function NewScrapeJobPage() {
         {/* Search Criteria */}
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Keywords / Bio Search</label>
+            <label className="block text-xs font-medium text-[var(--text-sub)] mb-1.5">Keywords / Bio Search</label>
             <input
               type="text"
               value={keywords}
               onChange={(e) => setKeywords(e.target.value)}
               placeholder="e.g. Founder, CEO, AI engineer, Marketing"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors"
+              className="origami-input"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Target Location (Optional)</label>
+            <label className="block text-xs font-medium text-[var(--text-sub)] mb-1.5">Target Location (Optional)</label>
             <input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="e.g. San Francisco, New York, Remote"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors"
+              className="origami-input"
             />
           </div>
         </div>
@@ -190,8 +193,8 @@ export default function NewScrapeJobPage() {
         {/* Max Leads Limit Slider */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <label className="block text-xs font-medium text-white/70">Target Lead Count</label>
-            <span className="text-xs font-mono font-bold text-violet-400 bg-violet-500/10 px-2.5 py-1 rounded-lg border border-violet-500/20">
+            <label className="block text-xs font-medium text-[var(--text-sub)]">Target Lead Count</label>
+            <span className="text-xs font-mono font-bold text-[var(--pink)] bg-[var(--pink-soft)] px-2.5 py-1 rounded-lg border border-[var(--pink-border)]">
               {limit} Leads
             </span>
           </div>
@@ -202,23 +205,23 @@ export default function NewScrapeJobPage() {
             step="10"
             value={limit}
             onChange={(e) => setLimit(parseInt(e.target.value))}
-            className="w-full accent-violet-500 bg-white/10 rounded-lg cursor-pointer h-2"
+            className="w-full accent-[var(--pink)] bg-[var(--border)] rounded-lg cursor-pointer h-2"
           />
         </div>
 
-        {/* ICP Description for RAG */}
-        <div className="border-t border-white/5 pt-6">
-          <label className="block text-xs font-semibold uppercase text-white/50 mb-1.5 tracking-wider">
+        {/* ICP Description */}
+        <div className="border-t border-[var(--border)] pt-6">
+          <label className="block text-xs font-semibold uppercase text-[var(--text-muted)] mb-1.5 tracking-wider">
             3. Natural Language ICP Criteria (RAG Context)
           </label>
-          <p className="text-xs text-white/50 mb-3">
+          <p className="text-xs text-[var(--text-muted)] mb-3">
             Our AI engine uses this exact criteria to analyze lead bios and recent post content, score alignment from 0 to 100, and draft personalized outreach.
           </p>
           <textarea
             rows={3}
             value={icpDescription}
             onChange={(e) => setIcpDescription(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-white/30 focus:outline-none focus:border-violet-500 transition-colors"
+            className="origami-textarea"
             required
           />
         </div>
@@ -227,7 +230,7 @@ export default function NewScrapeJobPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-violet-500/25 flex items-center justify-center gap-2"
+          className="origami-btn-primary w-full py-3.5"
         >
           {isSubmitting ? (
             <>
@@ -238,7 +241,12 @@ export default function NewScrapeJobPage() {
               <span>Executing Live Apify Scraper...</span>
             </>
           ) : (
-            <span>🚀 Start Scrape & AI Enrichment ({limit} Credits)</span>
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>Start Scrape & AI Enrichment ({limit} Credits)</span>
+            </>
           )}
         </button>
       </form>

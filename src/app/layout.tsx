@@ -41,10 +41,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} dark`}
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen bg-[#0a0a0f] text-white font-[family-name:var(--font-inter)] antialiased">
+      <body className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] font-[family-name:var(--font-inter)] antialiased">
         {children}
       </body>
     </html>
