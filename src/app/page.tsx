@@ -350,13 +350,13 @@ export default function LandingPage() {
             <p className="text-white/40 text-lg">Start free. Scale when you&apos;re ready.</p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-6 items-stretch">
             {(Object.entries(PLAN_CONFIG) as [string, typeof PLAN_CONFIG['free']][]).map(([key, plan]) => {
               const isPopular = key === 'growth';
               return (
                 <div
                   key={key}
-                  className={`relative rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 ${
+                  className={`relative rounded-2xl border p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${
                     isPopular
                       ? 'border-violet-500/50 bg-violet-500/5 shadow-lg shadow-violet-500/10'
                       : 'border-white/5 bg-white/[0.02] hover:border-white/10'
@@ -367,36 +367,42 @@ export default function LandingPage() {
                       Most Popular
                     </div>
                   )}
-                  <h3 className="text-lg font-semibold text-white mb-1">{plan.name}</h3>
-                  <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-3xl font-bold text-white">
-                      ${plan.price}
-                    </span>
-                    {plan.price > 0 && <span className="text-white/30 text-sm">/month</span>}
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-1">{plan.name}</h3>
+                    <div className="flex items-baseline gap-1 mb-4">
+                      <span className="text-3xl font-bold text-white">
+                        ${plan.price}
+                      </span>
+                      {plan.price > 0 && <span className="text-white/30 text-sm">/month</span>}
+                    </div>
+                    <p className="text-sm text-white/40 mb-6">
+                      {plan.credits.toLocaleString()} leads/month
+                    </p>
+                    <ul className="space-y-2 mb-6">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-2 text-sm text-white/50">
+                          <svg className="w-4 h-4 text-violet-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <p className="text-sm text-white/40 mb-6">
-                    {plan.credits.toLocaleString()} leads/month
-                  </p>
-                  <ul className="space-y-2 mb-6">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2 text-sm text-white/50">
-                        <svg className="w-4 h-4 text-violet-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href="/signup"
-                    className={`block text-center py-2.5 rounded-lg text-sm font-medium transition-all ${
-                      isPopular
-                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-violet-500/25'
-                        : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {plan.price === 0 ? 'Start Free' : 'Get Started'}
-                  </Link>
+
+                  <div className="mt-auto pt-4">
+                    <Link
+                      href="/signup"
+                      className={`block text-center py-2.5 rounded-lg text-sm font-medium transition-all ${
+                        isPopular
+                          ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-violet-500/25'
+                          : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {plan.price === 0 ? 'Start Free' : 'Get Started'}
+                    </Link>
+                  </div>
                 </div>
               );
             })}
