@@ -56,7 +56,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ═══════════════════════════════════════════════════════════════════ */}
       <aside style={{
         position: "fixed", top: 0, left: 0, bottom: 0,
-        width: "170px", zIndex: 40,
+        width: "220px", zIndex: 40,
         background: "#f0f0f4",
         borderRight: "1px solid rgba(0,0,0,0.09)",
         display: "flex", flexDirection: "column",
@@ -256,7 +256,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ═══════════════════════════════════════════════════════════════════ */}
       {/* MAIN CONTENT                                                        */}
       {/* ═══════════════════════════════════════════════════════════════════ */}
-      <main style={{ marginLeft: "170px", minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      <main style={{ marginLeft: "220px", minHeight: "100vh", display: "flex", flexDirection: "column" }}
         className="origami-pagoda-bg">
 
         {/* Sticky header */}
