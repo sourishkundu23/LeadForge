@@ -1,6 +1,6 @@
 @use "tailwindcss";
 
-// LeadForge — 100% Exact Origami.chat SCSS Theme & Layout System
+// LeadForge — 100% Exact Origami.chat SCSS Theme Architecture
 
 :root {
   --bg: #f8f8fb;
@@ -8,11 +8,13 @@
   --card-bg: #ffffff;
   --card-hover: #fafafa;
   --border: rgba(0, 0, 0, 0.08);
-  --text-main: #1e1e2d;
+  --text-main: #1a1a24;
   --text-sub: #64748b;
   --pink-primary: #e60067;
   --pink-soft: #fff0f5;
   --pink-border: #fbcfe8;
+  --tab-track-bg: #e6e6ec;
+  --btn-bg: #eaeaea;
 }
 
 .dark {
@@ -26,6 +28,8 @@
   --pink-primary: #f43f5e;
   --pink-soft: rgba(244, 63, 94, 0.12);
   --pink-border: rgba(244, 63, 94, 0.3);
+  --tab-track-bg: #181824;
+  --btn-bg: #1c1c2b;
 }
 
 body {
@@ -43,6 +47,42 @@ body {
   background-repeat: no-repeat;
   background-position: center 60%;
   background-size: contain;
+}
+
+/* Sidebar Specific SCSS Classes */
+.origami-sidebar {
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+}
+
+.origami-tab-track {
+  background-color: var(--tab-track-bg);
+  border: 1px solid var(--border);
+}
+
+.origami-tab-active {
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.origami-new-chat-btn {
+  background-color: var(--btn-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--card-bg);
+    border-color: rgba(230, 0, 103, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.origami-card {
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border);
 }
 
 /* Origami Chat Input Box */
@@ -100,24 +140,4 @@ body {
     border-color: rgba(0, 0, 0, 0.2);
     transform: translateY(-1px);
   }
-}
-
-.dark .origami-chip-secondary:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 999px;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
 }

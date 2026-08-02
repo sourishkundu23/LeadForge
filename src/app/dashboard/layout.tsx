@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [activeTab, setActiveTab] = useState<"outbound" | "content">("outbound");
   const [isSequencingOpen, setIsSequencingOpen] = useState(true);
   const [isMaintenanceDismissed, setIsMaintenanceDismissed] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false); // Light mode default matching Image 2!
+  const [isDarkMode, setIsDarkMode] = useState(false); // Light mode default matching Image 3!
 
   useEffect(() => {
     if (isDarkMode) {
@@ -20,9 +20,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [isDarkMode]);
 
   return (
-    <div className={`min-h-screen flex selection:bg-rose-500/20 selection:text-rose-600 ${isDarkMode ? "dark bg-[#0d0d12] text-white" : "bg-[#f8f8fb] text-[#1e1e2d]"}`}>
-      {/* Origami Left Sidebar */}
-      <aside className="w-64 border-r border-[var(--border)] bg-[var(--sidebar-bg)] flex flex-col justify-between p-4 flex-shrink-0 select-none transition-colors">
+    <div className={`min-h-screen flex selection:bg-rose-500/20 selection:text-rose-600 ${isDarkMode ? "dark bg-[#0d0d12] text-white" : "bg-[#f8f8fb] text-[#1a1a24]"}`}>
+      {/* Origami Left Sidebar — 100% Identical to Image 3 */}
+      <aside className="w-64 origami-sidebar flex flex-col justify-between p-4 flex-shrink-0 select-none transition-colors">
         <div className="space-y-4">
           {/* Top Brand & Workspace Switcher */}
           <div className="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors">
@@ -39,12 +39,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           {/* Outbound / Content Segmented Pill Switcher */}
-          <div className="bg-black/5 dark:bg-[#161622] p-1 rounded-xl flex border border-[var(--border)]">
+          <div className="origami-tab-track p-1 rounded-xl flex">
             <button
               onClick={() => setActiveTab("outbound")}
               className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "outbound"
-                  ? "bg-white dark:bg-[#202030] text-[var(--text-main)] shadow-sm border border-[var(--border)]"
+                  ? "origami-tab-active"
                   : "text-[var(--text-sub)] hover:text-[var(--text-main)]"
               }`}
             >
@@ -54,7 +54,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               onClick={() => setActiveTab("content")}
               className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "content"
-                  ? "bg-white dark:bg-[#202030] text-[var(--text-main)] shadow-sm border border-[var(--border)]"
+                  ? "origami-tab-active"
                   : "text-[var(--text-sub)] hover:text-[var(--text-main)]"
               }`}
             >
@@ -65,14 +65,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* + New Chat Action Button */}
           <Link
             href="/dashboard/new"
-            className="w-full flex items-center justify-center gap-2 bg-white dark:bg-[#1b1b28] hover:bg-black/5 dark:hover:bg-[#232334] text-[var(--text-main)] font-semibold py-2.5 px-4 rounded-xl border border-[var(--border)] text-sm transition-all shadow-sm hover:border-[#e60067]/40"
+            className="w-full flex items-center justify-center gap-2 origami-new-chat-btn font-semibold py-2.5 px-4 rounded-xl text-sm transition-all shadow-xs"
           >
             <span className="text-[#e60067] text-base">+</span>
             <span>New chat</span>
           </Link>
 
           {/* Origami Sidebar Navigation Items */}
-          <nav className="space-y-1 pt-2">
+          <nav className="space-y-1 pt-1">
             <Link
               href="/dashboard/leads"
               className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
@@ -147,25 +147,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Origami Bottom Sidebar Section */}
-        <div className="space-y-3 border-t border-[var(--border)] pt-4">
+        <div className="space-y-3 border-t border-[var(--border)] pt-3">
           <div className="px-2">
             <span className="text-[10px] uppercase font-bold text-[var(--text-sub)] tracking-wider">YOUR RECENT CHATS ▾</span>
           </div>
 
-          <div className="bg-white dark:bg-[#161622] border border-[var(--border)] rounded-xl p-3 space-y-2 shadow-sm">
+          {/* Smakg Growth Plays Card */}
+          <div className="origami-card rounded-xl p-3 space-y-2 shadow-xs">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-semibold text-[var(--text-main)]">Smakg Growth Plays</span>
+              <span className="font-bold text-[var(--text-main)]">Smakg Growth Plays</span>
             </div>
-            <div className="flex justify-between items-center text-[11px] text-[var(--text-sub)]">
+            <div className="flex justify-between items-center text-[11px] text-[var(--text-sub)] font-medium">
               <span>Get started</span>
               <span className="font-mono">0/5</span>
             </div>
-            <div className="w-full bg-black/10 dark:bg-white/10 h-1 rounded-full overflow-hidden">
+            <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
               <div className="bg-[#e60067] h-full w-[20%]" />
             </div>
           </div>
 
-          <div className="space-y-1 text-xs text-[var(--text-sub)]">
+          <div className="space-y-1 text-xs text-[var(--text-sub)] font-medium">
             <a href="https://slack.com" target="_blank" rel="noreferrer" className="flex items-center gap-2.5 px-2 py-1.5 hover:text-[var(--text-main)] transition-colors">
               <span>#</span> Join Slack
             </a>
@@ -183,7 +184,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="w-7 h-7 rounded-full bg-[#e60067] flex items-center justify-center text-xs font-bold text-white shadow-md">
                 S
               </div>
-              <span className="text-xs font-semibold text-[var(--text-main)]">Sourish Kundu</span>
+              <span className="text-xs font-bold text-[var(--text-main)]">Sourish Kundu</span>
             </div>
             <span className="text-[var(--text-sub)] text-xs cursor-pointer hover:text-[var(--text-main)]">🔒</span>
           </div>
@@ -217,12 +218,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Dark / Light Mode Toggle */}
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="bg-white dark:bg-white/10 text-xs px-3 py-1.5 rounded-full border border-[var(--border)] font-medium text-[var(--text-main)] shadow-sm hover:scale-105 transition-transform"
+              className="bg-white dark:bg-white/10 text-xs px-3.5 py-1.5 rounded-full border border-[var(--border)] font-semibold text-[var(--text-main)] shadow-xs hover:scale-105 transition-transform"
             >
               {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
 
-            <span className="bg-white dark:bg-white/10 text-[var(--text-sub)] text-xs px-3.5 py-1.5 rounded-full border border-[var(--border)] font-medium shadow-sm">
+            <span className="bg-white dark:bg-white/10 text-[var(--text-sub)] text-xs px-3.5 py-1.5 rounded-full border border-[var(--border)] font-semibold shadow-xs">
               Free plan
             </span>
           </div>
