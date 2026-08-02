@@ -15,60 +15,75 @@ export default function DashboardOverviewPage() {
     router.push(`/dashboard/new?prompt=${encodeURIComponent(promptText)}`);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleLaunch();
+  };
+
   return (
-    <div className="space-y-8 max-w-4xl mx-auto py-2">
-      {/* Hero Welcome Greeting */}
-      <div className="text-center pt-4">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#1a1a24] font-[family-name:var(--font-inter)]">
+    <div className="space-y-8 max-w-4xl mx-auto py-4">
+
+      {/* Hero Welcome */}
+      <div className="text-center pt-6 pb-2">
+        <h1 className="text-[2.6rem] font-bold tracking-tight text-[#0f172a] leading-tight">
           Welcome back, Sourish.
         </h1>
       </div>
 
-      {/* Origami Central AI Command Prompt Input Box */}
-      <div className="bg-white border border-black/10 rounded-2xl p-5 space-y-4 relative shadow-lg shadow-black/5">
+      {/* Central AI Prompt Input — matches Origami exactly */}
+      <div className="bg-white border border-black/[0.09] rounded-2xl shadow-sm overflow-visible">
         <textarea
           rows={3}
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
-          placeholder="Help me act on one of these recommendations..."
-          className="w-full bg-transparent text-[#1a1a24] placeholder-gray-400 text-base focus:outline-none resize-none leading-relaxed font-medium"
+          onKeyDown={handleKeyDown}
+          placeholder="Build a list"
+          className="w-full bg-transparent text-[#0f172a] placeholder-[#94a3b8] text-[15px] p-5 pb-2 focus:outline-none resize-none leading-relaxed"
         />
 
-        <div className="flex items-center justify-between pt-3 border-t border-black/5 text-xs text-[#64748b]">
-          {/* Left Input Tools */}
-          <div className="flex items-center gap-3">
-            <button className="p-1 hover:bg-black/5 rounded-lg transition-colors text-gray-500 hover:text-black font-bold text-base" title="Add action">
+        {/* Bottom toolbar */}
+        <div className="flex items-center justify-between px-4 py-3 border-t border-black/[0.05]">
+          {/* Left tools */}
+          <div className="flex items-center gap-1">
+            <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#0f172a] hover:bg-black/5 transition-colors font-bold text-lg" title="Add">
               +
             </button>
-            <button className="p-1 hover:bg-black/5 rounded-lg transition-colors text-gray-500 hover:text-black text-sm" title="Attach file">
-              📎
+            <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#0f172a] hover:bg-black/5 transition-colors" title="Attach">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+              </svg>
             </button>
-            <button className="p-1 hover:bg-black/5 rounded-lg transition-colors text-gray-500 hover:text-black text-sm" title="Insert URL link">
-              🔗
+            <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#0f172a] hover:bg-black/5 transition-colors" title="Link">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+              </svg>
             </button>
           </div>
 
-          {/* Right Controls */}
-          <div className="flex items-center gap-3 relative">
-            {/* Model Selector Dropdown */}
+          {/* Right controls */}
+          <div className="flex items-center gap-2 relative">
+            {/* Model selector */}
             <div className="relative">
               <button
                 onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
-                className="flex items-center gap-1.5 bg-[#f4f4f7] hover:bg-[#e8e8ed] px-3 py-1.5 rounded-xl border border-black/5 text-[#1a1a24] font-semibold transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-black/[0.08] bg-white text-[12.5px] font-semibold text-[#0f172a] hover:bg-[#f5f5f8] transition-colors"
               >
-                <span className="text-[#e60067]">⚡</span> {modelType} <span className="text-[10px] text-gray-400">▾</span>
+                <svg className="w-3.5 h-3.5 text-[#e60067]" fill="currentColor" viewBox="0 0 24 24">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+                {modelType}
+                <svg className="w-3 h-3 text-[#94a3b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
               </button>
-
               {isModelDropdownOpen && (
-                <div className="absolute right-0 bottom-full mb-2 w-36 bg-white border border-black/10 rounded-xl shadow-2xl py-1 z-50 text-xs">
+                <div className="absolute right-0 bottom-full mb-2 w-36 bg-white border border-black/[0.08] rounded-xl shadow-2xl py-1 z-50 text-xs">
                   {(["Lite", "Pro RAG", "Deep Search"] as const).map((m) => (
                     <button
                       key={m}
-                      onClick={() => {
-                        setModelType(m);
-                        setIsModelDropdownOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 text-[#1a1a24] hover:bg-[#fff0f5] hover:text-[#e60067] transition-colors font-medium"
+                      onClick={() => { setModelType(m); setIsModelDropdownOpen(false); }}
+                      className={`w-full text-left px-3 py-2 transition-colors font-medium ${
+                        modelType === m ? "text-[#e60067] bg-[#fff0f5]" : "text-[#0f172a] hover:bg-[#f5f5f8]"
+                      }`}
                     >
                       {m}
                     </button>
@@ -77,123 +92,136 @@ export default function DashboardOverviewPage() {
               )}
             </div>
 
-            <button className="p-1 hover:bg-black/5 rounded-lg transition-colors text-gray-500 hover:text-black text-sm" title="Voice Input">
-              🎙️
+            {/* Mic */}
+            <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:text-[#0f172a] hover:bg-black/5 transition-colors" title="Voice">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+              </svg>
             </button>
 
-            {/* Pink Origami Send Button */}
+            {/* Send */}
             <button
               onClick={handleLaunch}
-              className="bg-[#e60067] hover:bg-rose-600 text-white w-8 h-8 rounded-xl flex items-center justify-center font-extrabold text-sm transition-all active:scale-95 shadow-md shadow-rose-500/30"
+              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                promptText.trim()
+                  ? "bg-[#e60067] hover:bg-rose-600 text-white shadow-md shadow-rose-500/25 active:scale-95"
+                  : "bg-[#e60067] text-white opacity-80"
+              }`}
             >
-              ↑
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                <line x1="12" y1="19" x2="12" y2="5" />
+                <polyline points="5 12 12 5 19 12" />
+              </svg>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Origami Action Chips */}
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      {/* Action Chips */}
+      <div className="flex flex-wrap items-center justify-center gap-2.5">
         <button
-          onClick={() => setPromptText("Create a campaign to reach Series A")}
-          className="bg-[#fff0f5] border border-[#fbcfe8] text-[#e60067] hover:bg-rose-100/50 rounded-full text-xs font-semibold px-4 py-2 transition-all shadow-2xs flex items-center gap-2"
+          onClick={() => setPromptText("Give me ideas for reaching SaaS founders")}
+          className="flex items-center gap-2 bg-[#fff0f5] border border-[#fbcfe8] text-[#e60067] hover:bg-rose-50 rounded-full text-[12.5px] font-semibold px-4 py-2 transition-all"
         >
-          <span>💡</span> Give me ideas
+          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm0 18a8 8 0 110-16 8 8 0 010 16zm-1-5h2v2h-2zm0-8h2v6h-2z"/>
+          </svg>
+          Give me ideas
         </button>
-        <Link href="/dashboard/new" className="bg-white border border-black/10 hover:border-black/20 text-[#64748b] hover:text-[#1a1a24] rounded-full text-xs font-medium px-4 py-2 transition-all shadow-2xs flex items-center gap-2">
-          <span>+</span> New campaign
+        <Link
+          href="/dashboard/campaigns"
+          className="flex items-center gap-2 bg-white border border-black/[0.09] text-[#64748b] hover:text-[#0f172a] hover:border-black/20 rounded-full text-[12.5px] font-medium px-4 py-2 transition-all"
+        >
+          + New campaign
         </Link>
-        <Link href="/dashboard/icps" className="bg-white border border-black/10 hover:border-black/20 text-[#64748b] hover:text-[#1a1a24] rounded-full text-xs font-medium px-4 py-2 transition-all shadow-2xs flex items-center gap-2">
-          <span>Set up signals</span>
+        <Link
+          href="/dashboard/icps"
+          className="flex items-center gap-2 bg-white border border-black/[0.09] text-[#64748b] hover:text-[#0f172a] hover:border-black/20 rounded-full text-[12.5px] font-medium px-4 py-2 transition-all"
+        >
+          Set up signals
         </Link>
-        <Link href="/dashboard/leads" className="bg-white border border-black/10 hover:border-black/20 text-[#64748b] hover:text-[#1a1a24] rounded-full text-xs font-medium px-4 py-2 transition-all shadow-2xs flex items-center gap-2">
-          <span>Upload CSV</span>
+        <Link
+          href="/dashboard/leads"
+          className="flex items-center gap-2 bg-white border border-black/[0.09] text-[#64748b] hover:text-[#0f172a] hover:border-black/20 rounded-full text-[12.5px] font-medium px-4 py-2 transition-all"
+        >
+          Upload CSV
         </Link>
       </div>
 
-      {/* Past 7 Days Metrics Grid */}
-      <div className="space-y-3 pt-4">
-        <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Past 7 days</span>
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white border border-black/10 rounded-2xl p-6 flex flex-col justify-between shadow-xs">
-            <div>
-              <p className="text-3xl font-extrabold text-[#1a1a24] mb-1 font-mono">23</p>
-              <p className="text-xs font-medium text-[#64748b]">New leads</p>
-            </div>
+      {/* Past 7 Days */}
+      <div className="space-y-3 pt-2">
+        <p className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-widest">Past 7 days</p>
+        <div className="grid grid-cols-3 gap-3">
+          {/* New leads */}
+          <div className="bg-white border border-black/[0.07] rounded-2xl p-5 shadow-xs">
+            <p className="text-[32px] font-bold text-[#0f172a] leading-none mb-1">23</p>
+            <p className="text-[12px] text-[#94a3b8] font-medium">New leads</p>
           </div>
-
-          <div className="bg-white border border-black/10 rounded-2xl p-6 flex items-center justify-between hover:border-[#e60067]/30 transition-colors cursor-pointer group shadow-xs">
-            <div className="space-y-1">
-              <div className="w-12 h-2 bg-gray-100 rounded-full" />
-              <div className="w-8 h-2 bg-gray-100 rounded-full" />
+          {/* Connect email */}
+          <div className="bg-white border border-black/[0.07] rounded-2xl p-5 flex items-center justify-between cursor-pointer hover:border-[#e60067]/30 transition-colors group shadow-xs">
+            <div className="space-y-1.5">
+              <div className="w-10 h-2 bg-[#f0f0f3] rounded-full" />
+              <div className="w-7 h-2 bg-[#f0f0f3] rounded-full" />
             </div>
-            <span className="text-sm font-bold text-[#e60067] group-hover:underline">Connect email →</span>
+            <span className="text-[12.5px] font-bold text-[#e60067] group-hover:underline">Connect email →</span>
           </div>
-
-          <div className="bg-white border border-black/10 rounded-2xl p-6 flex items-center justify-between hover:border-[#e60067]/30 transition-colors cursor-pointer group shadow-xs">
-            <div className="space-y-1">
-              <div className="w-12 h-2 bg-gray-100 rounded-full" />
-              <div className="w-8 h-2 bg-gray-100 rounded-full" />
+          {/* Connect LinkedIn */}
+          <div className="bg-white border border-black/[0.07] rounded-2xl p-5 flex items-center justify-between cursor-pointer hover:border-[#e60067]/30 transition-colors group shadow-xs">
+            <div className="space-y-1.5">
+              <div className="w-10 h-2 bg-[#f0f0f3] rounded-full" />
+              <div className="w-7 h-2 bg-[#f0f0f3] rounded-full" />
             </div>
-            <span className="text-sm font-bold text-[#e60067] group-hover:underline">Connect LinkedIn →</span>
+            <span className="text-[12.5px] font-bold text-[#e60067] group-hover:underline">Connect LinkedIn →</span>
           </div>
         </div>
       </div>
 
-      {/* Actionable Insights Report Section */}
-      <div className="bg-white border border-black/10 rounded-2xl p-6 space-y-6 shadow-xs">
-        <div className="flex items-center justify-between border-b border-black/5 pb-4">
-          <div className="flex items-center gap-2.5 text-xs">
-            <div className="w-6 h-6 rounded-full bg-[#e60067] text-white flex items-center justify-center font-bold text-xs shadow-md shadow-rose-500/20">
-              ✈
+      {/* Insights Report Card */}
+      <div className="bg-white border border-black/[0.07] rounded-2xl shadow-xs overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-black/[0.05]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-full bg-[#e60067] text-white flex items-center justify-center shadow-sm">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M21.66 10.36l-9-16a1 1 0 0 0-1.73 0l-9 16A1 1 0 0 0 3 12h18a1 1 0 0 0 .66-1.64z"/>
+              </svg>
             </div>
-            <span className="font-bold text-[#1a1a24]">What&apos;s costing you replies</span>
-            <span className="text-[#64748b]">· from your August 2 report</span>
+            <span className="text-[13px] font-bold text-[#0f172a]">What&apos;s costing you replies</span>
+            <span className="text-[12px] text-[#94a3b8]">· from your August 2 report</span>
           </div>
-
-          <div className="flex items-center gap-4 text-xs">
-            <button className="text-[#64748b] hover:text-[#1a1a24] transition-colors flex items-center gap-1">
-              <span>🔄</span> Recheck
+          <div className="flex items-center gap-4">
+            <button className="flex items-center gap-1.5 text-[12px] text-[#64748b] hover:text-[#0f172a] transition-colors font-medium">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+              </svg>
+              Recheck
             </button>
-            <button className="text-[#e60067] font-bold hover:underline">
-              Open report
-            </button>
+            <button className="text-[12.5px] font-bold text-[#e60067] hover:underline">Open report</button>
           </div>
         </div>
 
-        {/* Origami Insight Items */}
-        <div className="space-y-4 text-sm">
+        <div className="divide-y divide-black/[0.04]">
           {[
-            {
-              title: "No sender connected",
-              desc: "10 verified UK/EU AI founders ready to hear from you",
-            },
-            {
-              title: "Your best list has never been sequenced",
-              desc: "10 qualified founders, not a single message sent",
-            },
-            {
-              title: "The trigger that predicts your buyers is unbuilt",
-              desc: "recently-funded startups hiring AI engineers",
-            },
+            { title: "No sender connected", desc: "10 verified UK/EU AI founders ready to hear from you" },
+            { title: "Your best list has never been sequenced", desc: "10 qualified founders, not a single message sent" },
+            { title: "The trigger that predicts your buyers is unbuilt", desc: "recently-funded startups hiring AI engineers" },
           ].map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between py-2 border-b border-black/5 last:border-0">
+            <div key={idx} className="flex items-center justify-between px-5 py-3.5">
               <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center text-[10px] text-gray-400">
-                  ○
-                </div>
-                <div>
-                  <span className="font-bold text-[#1a1a24]">{item.title}</span>
-                  <span className="text-[#64748b] text-xs ml-2">· {item.desc}</span>
+                <div className="w-4 h-4 rounded-full border-[1.5px] border-[#cbd5e1] flex-shrink-0" />
+                <div className="text-[13px]">
+                  <span className="font-semibold text-[#0f172a]">{item.title}</span>
+                  <span className="text-[#94a3b8] ml-2">· {item.desc}</span>
                 </div>
               </div>
-              <button className="text-xs text-[#64748b] hover:text-[#1a1a24] hover:underline transition-colors font-medium">
+              <button className="text-[12px] text-[#64748b] hover:text-[#0f172a] transition-colors font-medium ml-4 flex-shrink-0">
                 View details
               </button>
             </div>
           ))}
         </div>
       </div>
+
     </div>
   );
 }

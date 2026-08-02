@@ -82,6 +82,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (pathname === "/dashboard/icps") return "ICP Profiles";
     if (pathname === "/dashboard/new") return "New chat";
     if (pathname === "/dashboard/posts") return "Your posts";
+    if (pathname === "/dashboard/campaigns") return "Campaigns";
+    if (pathname === "/dashboard/senders") return "Senders";
+    if (pathname === "/dashboard/analytics") return "Analytics";
     return "Dashboard";
   };
 
@@ -180,7 +183,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                 {isSequencingOpen && (
                   <div className="ml-[26px] border-l border-black/[0.07] pl-3 mt-0.5 space-y-0.5">
-                    <Link href="/dashboard" className={subNavItem(pathname === "/dashboard")}>
+                    <Link href="/dashboard/campaigns" className={subNavItem(isActive("/dashboard/campaigns"))}>
                       Campaigns
                     </Link>
                     <Link href="/dashboard/leads" className={subNavItem(isActive("/dashboard/leads"))}>
@@ -226,7 +229,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </svg>
           </button>
 
-          {/* Recent chat card (Smakg Growth Plays) */}
+          {/* Recent chat card */}
           <div className="bg-white rounded-xl border border-black/[0.07] p-3 space-y-2 shadow-xs cursor-pointer hover:border-black/10 transition-colors">
             <p className="text-[12.5px] font-bold text-[#0f172a] truncate">Smakg Growth Plays</p>
             <div className="flex items-center justify-between text-[11px] text-[#94a3b8] font-medium">
