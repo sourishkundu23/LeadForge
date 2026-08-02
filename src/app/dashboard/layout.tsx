@@ -8,7 +8,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<"outbound" | "content">("outbound");
   const [isSequencingOpen, setIsSequencingOpen] = useState(true);
-  const [isMaintenanceDismissed, setIsMaintenanceDismissed] = useState(false);
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<"x" | "linkedin" | "tiktok" | "instagram">("x");
 
@@ -231,22 +230,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content Area                         */}
       {/* ========================================= */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto origami-pagoda-bg relative">
-        {/* Maintenance Banner */}
-        {!isMaintenanceDismissed && (
-          <div className="bg-[#fff0f5] border-b border-[#fbcfe8] px-6 py-2 flex items-center justify-between text-xs text-[#e60067]">
-            <div className="flex items-center gap-2 mx-auto font-medium">
-              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-              <span>We&apos;re planning to conduct scheduled maintenance on August 1st (Saturday) between 8am and 5pm Pacific Time</span>
-            </div>
-            <button
-              onClick={() => setIsMaintenanceDismissed(true)}
-              className="text-[#e60067]/60 hover:text-[#e60067] transition-colors"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
         {/* Top Header */}
         <header className="px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2 text-xs text-[#64748b]">
