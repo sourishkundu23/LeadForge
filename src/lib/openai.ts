@@ -13,24 +13,26 @@ const ai = new GoogleGenAI({
 });
 
 /**
- * Generate embeddings for text content using Gemini or OpenAI.
+ * Generate embeddings for text content using Gemini or OpenAI with retry logic.
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   if (geminiKey) {
-    try {
-      const response = await ai.models.embedContent({
-        model: 'text-embedding-004',
-        contents: text.slice(0, 8000),
-      });
-      const resAny = response as unknown as { embedding?: { values?: number[] }; embeddings?: Array<{ values?: number[] }> };
-      const values = resAny.embedding?.values || resAny.embeddings?.[0]?.values || [];
-      // If 768 dims, repeat/pad to 1536 to match vector(1536) schema
-      if (values.length === 768) {
-        return [...values, ...values];
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const response = await ai.models.embedContent({
+          model: 'text-embedding-004',
+          contents: text.slice(0, 8000),
+        });
+        const resAny = response as unknown as { embedding?: { values?: number[] }; embeddings?: Array<{ values?: number[] }> };
+        const values = resAny.embedding?.values || resAny.embeddings?.[0]?.values || [];
+        if (values.length === 768) {
+          return [...values, ...values]; // Duplicate to match 1536 vector dimension in Supabase
+        }
+        if (values.length > 0) return values;
+      } catch (err) {
+        console.warn(`Gemini embedding attempt ${attempt} failed:`, err);
+        if (attempt < 3) await new Promise(res => setTimeout(res, 500 * attempt));
       }
-      if (values.length > 0) return values;
-    } catch (err) {
-      console.warn('Gemini embedding failed, attempting OpenAI fallback:', err);
     }
   }
 
@@ -41,9 +43,6 @@ export async function generateEmbedding(text: string): Promise<number[]> {
   return response.data[0].embedding;
 }
 
-/**
- * Generate embeddings for multiple texts in batch.
- */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   const results: number[][] = [];
   for (const text of texts) {
@@ -54,8 +53,14 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 }
 
 /**
- * Score a lead against an ICP profile using Gemini (or OpenAI fallback).
- * Returns ICP score, summary, intent signals, and personalized outreach.
+ * Clean JSON strings from markdown ticks (e.g. ```json ... ```)
+ */
+function cleanJsonString(raw: string): string {
+  return raw.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+}
+
+/**
+ * Score a lead against an ICP profile using Gemini (or OpenAI fallback) with 3 retries.
  */
 export async function enrichLeadWithAI(
   leadContext: string,
@@ -72,48 +77,52 @@ export async function enrichLeadWithAI(
   pain_points: string[];
   outreach_message: string;
 }> {
-  const systemPrompt = `You are an expert B2B sales intelligence analyst. Your job is to analyze a lead's social media profile and content, then score them against an Ideal Customer Profile (ICP).
+  const systemPrompt = `You are an expert B2B sales intelligence analyst. Analyze a lead's social media profile and score them against an Ideal Customer Profile (ICP).
 
-You must return a JSON object with these exact fields:
+Return a JSON object with these exact keys:
 - icp_score: number from 0-100 (how well this lead matches the ICP)
-- ai_summary: string (2-3 sentences explaining WHY this lead is or isn't a good fit)
+- ai_summary: string (2-3 sentences explaining WHY this lead is or isn't a fit)
 - intent_signals: array of objects with {type, signal, strength, source}
-  - type: one of "hiring", "fundraising", "scaling", "pain_point", "tech_adoption", "competitor_mention", "buying_intent"
-  - signal: what you detected (1 sentence)
-  - strength: "high", "medium", or "low"
-  - source: which part of their profile/content revealed this
-- pain_points: array of strings (specific pain points you detected from their content)
-- outreach_message: string (a personalized, non-generic cold DM/email that references specific things about them — max 150 words)
+- pain_points: array of strings
+- outreach_message: string (personalized, non-generic cold DM/email — max 150 words)`;
 
-Be precise. Don't make up information. Only score based on what's actually present in the data.
-If there's insufficient data, score lower and say so in the summary.`;
-
-  const userPrompt = `## ICP (Ideal Customer Profile):
+  const userPrompt = `## ICP Criteria:
 ${icpDescription}
 
 ## Lead Data:
-${leadContext}
+${leadContext}`;
 
-Analyze this lead against the ICP and return the JSON result.`;
-
-  // Try Gemini 2.0 Flash / 1.5 Flash if key exists
   if (geminiKey) {
-    try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents: `${systemPrompt}\n\n${userPrompt}`,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.3,
-        },
-      });
+    const geminiModels = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+    for (const modelName of geminiModels) {
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: `${systemPrompt}\n\n${userPrompt}`,
+            config: {
+              responseMimeType: 'application/json',
+              temperature: 0.3,
+            },
+          });
 
-      const text = response.text;
-      if (text) {
-        return JSON.parse(text);
+          const rawText = response.text;
+          if (rawText) {
+            const cleaned = cleanJsonString(rawText);
+            const parsed = JSON.parse(cleaned);
+            return {
+              icp_score: parsed.icp_score ?? 50,
+              ai_summary: parsed.ai_summary || 'Lead analyzed with Gemini RAG engine.',
+              intent_signals: Array.isArray(parsed.intent_signals) ? parsed.intent_signals : [],
+              pain_points: Array.isArray(parsed.pain_points) ? parsed.pain_points : [],
+              outreach_message: parsed.outreach_message || 'Hey! Noticed your profile...',
+            };
+          }
+        } catch (err) {
+          console.warn(`Gemini model ${modelName} attempt ${attempt} failed:`, err);
+          if (attempt < 3) await new Promise(res => setTimeout(res, 500 * attempt));
+        }
       }
-    } catch (err) {
-      console.warn('Gemini LLM call failed, attempting OpenAI fallback:', err);
     }
   }
 
@@ -134,12 +143,16 @@ Analyze this lead against the ICP and return the JSON result.`;
     throw new Error('Empty response from AI engine');
   }
 
-  return JSON.parse(content);
+  const parsed = JSON.parse(cleanJsonString(content));
+  return {
+    icp_score: parsed.icp_score ?? 50,
+    ai_summary: parsed.ai_summary || 'Lead analyzed by AI engine.',
+    intent_signals: Array.isArray(parsed.intent_signals) ? parsed.intent_signals : [],
+    pain_points: Array.isArray(parsed.pain_points) ? parsed.pain_points : [],
+    outreach_message: parsed.outreach_message || 'Hey! Noticed your profile...',
+  };
 }
 
-/**
- * Generate a natural language ICP embedding from user's description.
- */
 export async function embedICPDescription(description: string): Promise<number[]> {
   const enhancedDescription = `
     Ideal Customer Profile: ${description}
@@ -149,9 +162,6 @@ export async function embedICPDescription(description: string): Promise<number[]
   return generateEmbedding(enhancedDescription);
 }
 
-/**
- * Build a rich text context string from lead data for RAG enrichment.
- */
 export function buildLeadContext(lead: {
   username?: string | null;
   full_name?: string | null;
