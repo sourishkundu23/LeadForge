@@ -332,12 +332,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         style={{ marginLeft: "168px" }}
       >
         {/* Header */}
-        <header className="px-8 py-3.5 flex justify-between items-center sticky top-0 z-20 bg-[#f5f5f8]/80" style={{ backdropFilter: "blur(8px)" }}>
-          <span className="text-[13px] font-semibold text-[#0f172a]">{pageTitle()}</span>
-          <span className="text-[12px] font-semibold text-[#e60067]">Free plan</span>
+        <header className="px-6 py-3 flex justify-between items-center sticky top-0 z-20 bg-[#f5f5f8]/80" style={{ backdropFilter: "blur(8px)" }}>
+          <span className="text-[12.5px] font-semibold text-[#0f172a]">{pageTitle()}</span>
+          <span className="text-[11.5px] font-semibold text-[#e60067]">Free plan</span>
         </header>
 
-        <div className="px-8 pb-8 flex-1">{children}</div>
+        <div className="px-6 pb-6 flex-1">{children}</div>
 
         {/* Floating chat button */}
         <div className="fixed bottom-6 right-6 z-40">
