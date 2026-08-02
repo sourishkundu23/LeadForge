@@ -4,17 +4,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { createServerClient, createServerSupabaseClient } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = createServerClient();
+    const ssrSupabase = await createServerSupabaseClient();
+    const { data: { user: ssrUser } } = await ssrSupabase.auth.getUser();
 
     const authHeader = request.headers.get('Authorization');
-    let userId: string | null = null;
-    if (authHeader && authHeader !== 'Bearer dev-token') {
+    let userId: string | null = ssrUser?.id || null;
+    if (!userId && authHeader && authHeader !== 'Bearer dev-token') {
       const token = authHeader.replace('Bearer ', '');
       const { data: { user } } = await supabase.auth.getUser(token);
       if (user) userId = user.id;

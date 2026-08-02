@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { createServerClient, createServerSupabaseClient } from '@/lib/supabase';
 import { generateEmbedding } from '@/lib/openai';
 import { executeScrapeJob } from '@/lib/scrapers/orchestrator';
 import type { CreateJobRequest } from '@/lib/types';
@@ -26,27 +26,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user from auth header or fallback to dev user
+    // Get user from cookie session or auth header or fallback to dev user
+    const ssrSupabase = await createServerSupabaseClient();
+    const { data: { user: ssrUser } } = await ssrSupabase.auth.getUser();
+
     const authHeader = request.headers.get('Authorization');
-    let userId = '00000000-0000-0000-0000-000000000000';
+    let userId = ssrUser?.id || '00000000-0000-0000-0000-000000000000';
     let userPlan = 'starter';
     let userCredits = 500;
 
-    if (authHeader && authHeader !== 'Bearer dev-token') {
+    if (!ssrUser && authHeader && authHeader !== 'Bearer dev-token') {
       const token = authHeader.replace('Bearer ', '');
       const { data: { user } } = await supabase.auth.getUser(token);
       if (user) {
         userId = user.id;
-        const { data: userData } = await supabase
-          .from('users')
-          .select('credits_remaining, plan')
-          .eq('id', user.id)
-          .single();
-        if (userData) {
-          userPlan = userData.plan || 'starter';
-          userCredits = userData.credits_remaining ?? 500;
-        }
       }
+    }
+
+    const { data: userData } = await supabase
+      .from('users')
+      .select('plan, credits_remaining')
+      .eq('id', userId)
+      .single();
+
+    if (userData) {
+      userPlan = userData.plan || 'starter';
+      userCredits = userData.credits_remaining ?? 500;
     }
 
     if (userCredits <= 0) {
@@ -106,10 +111,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Kick off the scraping pipeline asynchronously
-    // In production, this would be a background worker / Supabase Edge Function
-    executeScrapeJob(job.id).catch(err => {
-      console.error('Background scrape job failed:', err);
+    // Kick off the scraping pipeline via background worker & fallback
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    fetch(`${appUrl}/api/jobs/worker`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_id: job.id }),
+    }).catch(() => {
+      // Fallback in case of local network dev worker
+      executeScrapeJob(job.id).catch(err => {
+        console.error('Background scrape job failed:', err);
+      });
     });
 
     // Estimate credits
