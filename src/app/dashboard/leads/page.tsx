@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { LinkedInIcon, InstagramIcon, TwitterXIcon } from "@/components/PlatformIcons";
 
 interface LeadItem {
   id: string;
@@ -266,10 +267,22 @@ function LeadsDatabaseContent() {
                       <p className="text-xs font-medium">{lead.title}</p>
                       <p className="text-[11px] text-white/40">{lead.company}</p>
                     </td>
-                    <td className="py-4 px-4 capitalize text-xs text-white/60">
-                      {lead.platform === "linkedin" && "💼 LinkedIn"}
-                      {lead.platform === "instagram" && "📸 Instagram"}
-                      {lead.platform === "twitter" && "🐦 Twitter"}
+                    <td className="py-4 px-4 capitalize text-xs text-white/80">
+                      {lead.platform === "linkedin" && (
+                        <span className="flex items-center gap-1.5 text-[#0A66C2]">
+                          <LinkedInIcon className="w-4 h-4" /> LinkedIn
+                        </span>
+                      )}
+                      {lead.platform === "instagram" && (
+                        <span className="flex items-center gap-1.5 text-[#E4405F]">
+                          <InstagramIcon className="w-4 h-4" /> Instagram
+                        </span>
+                      )}
+                      {lead.platform === "twitter" && (
+                        <span className="flex items-center gap-1.5 text-white">
+                          <TwitterXIcon className="w-4 h-4" /> Twitter / X
+                        </span>
+                      )}
                     </td>
                     <td className="py-4 px-4 text-xs font-mono">
                       {lead.email ? (
