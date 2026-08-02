@@ -1,48 +1,109 @@
 @use "tailwindcss";
 
-// LeadForge — 100% Exact Origami.chat SCSS Theme Architecture
-
-$bg-dark: #0d0d12;
-$sidebar-dark: #111118;
-$card-dark: #161622;
-$card-hover-dark: #1c1c2b;
-$border-dark: rgba(255, 255, 255, 0.08);
-
-$bg-light: #f8f8fb;
-$sidebar-light: #f1f1f6;
-$card-light: #ffffff;
-$border-light: rgba(0, 0, 0, 0.08);
-
-$origami-pink: #e60067;
-$origami-rose: #f43f5e;
-$origami-pink-glow: rgba(230, 0, 103, 0.25);
+// LeadForge — 100% Exact Origami.chat SCSS Theme & Layout System
 
 :root {
-  --bg: #{$bg-dark};
-  --sidebar-bg: #{$sidebar-dark};
-  --card-bg: #{$card-dark};
-  --border: #{$border-dark};
-  --pink: #{$origami-rose};
+  --bg: #f8f8fb;
+  --sidebar-bg: #f3f3f8;
+  --card-bg: #ffffff;
+  --card-hover: #fafafa;
+  --border: rgba(0, 0, 0, 0.08);
+  --text-main: #1e1e2d;
+  --text-sub: #64748b;
+  --pink-primary: #e60067;
+  --pink-soft: #fff0f5;
+  --pink-border: #fbcfe8;
 }
 
-.theme-light {
-  --bg: #{$bg-light};
-  --sidebar-bg: #{$sidebar-light};
-  --card-bg: #{$card-light};
-  --border: #{$border-light};
-  --pink: #{$origami-pink};
+.dark {
+  --bg: #0d0d12;
+  --sidebar-bg: #111118;
+  --card-bg: #161622;
+  --card-hover: #1c1c2b;
+  --border: rgba(255, 255, 255, 0.08);
+  --text-main: #ffffff;
+  --text-sub: rgba(255, 255, 255, 0.6);
+  --pink-primary: #f43f5e;
+  --pink-soft: rgba(244, 63, 94, 0.12);
+  --pink-border: rgba(244, 63, 94, 0.3);
 }
 
 body {
   background-color: var(--bg);
-  color: #ffffff;
+  color: var(--text-main);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.theme-light body {
-  color: #1a1a24;
+/* Origami Pagoda Watermark Background */
+.origami-pagoda-bg {
+  background-image: radial-gradient(circle at 50% 40%, rgba(230, 0, 103, 0.03) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400' opacity='0.04'%3E%3Cpath fill='%23e60067' d='M200 40l-40 30h80zM150 70l-30 25h160l-30-25zM130 100v10h140v-10zM120 115l-30 30h220l-30-30zM100 150v20h200v-20zM90 175l-40 40h300l-40-40zM70 220v140h260v-140z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center 60%;
+  background-size: contain;
+}
+
+/* Origami Chat Input Box */
+.origami-input-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: rgba(230, 0, 103, 0.5);
+    box-shadow: 0 0 25px rgba(230, 0, 103, 0.15);
+  }
+}
+
+.dark .origami-input-card {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+
+  &:focus-within {
+    border-color: rgba(244, 63, 94, 0.5);
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.25);
+  }
+}
+
+/* Origami Action Chips */
+.origami-chip-primary {
+  background: var(--pink-soft);
+  border: 1px solid var(--pink-border);
+  color: var(--pink-primary);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 0, 103, 0.15);
+  }
+}
+
+.origami-chip-secondary {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-sub);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.45rem 1rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--text-main);
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+  }
+}
+
+.dark .origami-chip-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Custom Scrollbar */
@@ -54,52 +115,9 @@ body {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 999px;
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
 }
-
-/* Origami Chat Command Prompt Box */
-.origami-chat-box {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem;
-  box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.4);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-
-  &:focus-within {
-    border-color: rgba(244, 63, 94, 0.6);
-    box-shadow: 0 0 30px $origami-pink-glow;
-  }
-}
-
-/* Origami Quick Action Chips */
-.origami-action-chip {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  border-radius: 9999px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  padding: 0.45rem 1rem;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-
-  &:hover {
-    background: rgba(244, 63, 94, 0.15);
-    border-color: rgba(244, 63, 94, 0.4);
-    color: #ffffff;
-    transform: translateY(-1.5px);
-  }
-}
-
-/* Origami Crane Logo Animation */
-@keyframes origamiFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-3px) rotate(2deg); }
-}
-
-.origami-logo-crane {
-  animation: origamiFloat 4s ease-in-out infinite;
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
 }
