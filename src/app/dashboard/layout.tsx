@@ -140,8 +140,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {activeTab === "outbound" ? (
             <nav className="space-y-0.5">
               {/* New chat */}
-              <Link href="/dashboard/new" className={navItem(isActive("/dashboard/new"))}>
-                <span className={isActive("/dashboard/new") ? "text-[#0f172a]" : "text-[#94a3b8]"}>
+              <Link href="/dashboard" className={navItem(pathname === "/dashboard")}>
+                <span className={pathname === "/dashboard" ? "text-[#0f172a]" : "text-[#94a3b8]"}>
                   <IconNewChat />
                 </span>
                 New chat
@@ -156,7 +156,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </Link>
 
               {/* Scheduled */}
-              <Link href="/dashboard/scheduled" className={navItem(isActive("/dashboard/scheduled"))}>
+              <Link href="/dashboard/scheduled" className={navItem(pathname.startsWith("/dashboard/scheduled"))}>
                 <span className={isActive("/dashboard/scheduled") ? "text-[#0f172a]" : "text-[#94a3b8]"}>
                   <IconScheduled />
                 </span>
@@ -199,7 +199,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           ) : (
             /* Content mode nav */
             <nav className="space-y-0.5">
-              <Link href="/dashboard/new" className={navItem(isActive("/dashboard/new"))}>
+              <Link href="/dashboard" className={navItem(pathname === "/dashboard")}>
                 <span className="text-[#94a3b8]"><IconNewChat /></span>
                 New chat
               </Link>
