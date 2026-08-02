@@ -33,12 +33,12 @@ export default function DashboardOverviewPage() {
       {/* AI Prompt */}
       <div className="bg-white border border-black/[0.08] rounded-2xl shadow-xs">
         <textarea
-          rows={2}
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Build a list"
-          className="w-full bg-transparent text-[#0f172a] placeholder-[#94a3b8] text-[14px] px-5 pt-4 pb-1 focus:outline-none resize-none leading-relaxed"
+          style={{ minHeight: "72px", maxHeight: "200px" }}
+          className="w-full bg-transparent text-[#0f172a] placeholder-[#94a3b8] text-[14px] px-5 pt-4 pb-2 focus:outline-none resize-none leading-normal"
         />
 
         {/* Toolbar */}
