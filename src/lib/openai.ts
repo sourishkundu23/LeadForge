@@ -1,19 +1,42 @@
 import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 
-const apiKey = process.env.OPENAI_API_KEY || 'placeholder-openai-key';
+const openaiKey = process.env.OPENAI_API_KEY;
+const geminiKey = process.env.GEMINI_API_KEY;
 
 export const openai = new OpenAI({
-  apiKey,
+  apiKey: openaiKey || 'placeholder-key',
+});
+
+const ai = new GoogleGenAI({
+  apiKey: geminiKey || 'placeholder-key',
 });
 
 /**
- * Generate embeddings for text content using OpenAI's text-embedding-3-small model.
- * Cost: ~$0.00002 per chunk — extremely cheap.
+ * Generate embeddings for text content using Gemini or OpenAI.
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
+  if (geminiKey) {
+    try {
+      const response = await ai.models.embedContent({
+        model: 'text-embedding-004',
+        contents: text.slice(0, 8000),
+      });
+      const resAny = response as unknown as { embedding?: { values?: number[] }; embeddings?: Array<{ values?: number[] }> };
+      const values = resAny.embedding?.values || resAny.embeddings?.[0]?.values || [];
+      // If 768 dims, repeat/pad to 1536 to match vector(1536) schema
+      if (values.length === 768) {
+        return [...values, ...values];
+      }
+      if (values.length > 0) return values;
+    } catch (err) {
+      console.warn('Gemini embedding failed, attempting OpenAI fallback:', err);
+    }
+  }
+
   const response = await openai.embeddings.create({
     model: 'text-embedding-3-small',
-    input: text.slice(0, 8000), // Limit input length
+    input: text.slice(0, 8000),
   });
   return response.data[0].embedding;
 }
@@ -22,16 +45,16 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  * Generate embeddings for multiple texts in batch.
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
-  const truncated = texts.map(t => t.slice(0, 8000));
-  const response = await openai.embeddings.create({
-    model: 'text-embedding-3-small',
-    input: truncated,
-  });
-  return response.data.map(d => d.embedding);
+  const results: number[][] = [];
+  for (const text of texts) {
+    const emb = await generateEmbedding(text);
+    results.push(emb);
+  }
+  return results;
 }
 
 /**
- * Score a lead against an ICP profile using GPT-4o-mini.
+ * Score a lead against an ICP profile using Gemini (or OpenAI fallback).
  * Returns ICP score, summary, intent signals, and personalized outreach.
  */
 export async function enrichLeadWithAI(
@@ -73,6 +96,28 @@ ${leadContext}
 
 Analyze this lead against the ICP and return the JSON result.`;
 
+  // Try Gemini 2.0 Flash / 1.5 Flash if key exists
+  if (geminiKey) {
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: `${systemPrompt}\n\n${userPrompt}`,
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.3,
+        },
+      });
+
+      const text = response.text;
+      if (text) {
+        return JSON.parse(text);
+      }
+    } catch (err) {
+      console.warn('Gemini LLM call failed, attempting OpenAI fallback:', err);
+    }
+  }
+
+  // Fallback to OpenAI GPT-4o-mini
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
@@ -86,7 +131,7 @@ Analyze this lead against the ICP and return the JSON result.`;
 
   const content = response.choices[0].message.content;
   if (!content) {
-    throw new Error('Empty response from OpenAI');
+    throw new Error('Empty response from AI engine');
   }
 
   return JSON.parse(content);
@@ -94,10 +139,8 @@ Analyze this lead against the ICP and return the JSON result.`;
 
 /**
  * Generate a natural language ICP embedding from user's description.
- * This is used for similarity matching against lead embeddings.
  */
 export async function embedICPDescription(description: string): Promise<number[]> {
-  // Enhance the ICP description for better embedding quality
   const enhancedDescription = `
     Ideal Customer Profile: ${description}
     This person would be relevant for business outreach and lead generation.
