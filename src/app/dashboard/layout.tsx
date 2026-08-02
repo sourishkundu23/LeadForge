@@ -62,14 +62,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const navItem = (active: boolean) =>
-    `flex items-center gap-2.5 w-full px-3 py-[7px] rounded-xl text-[13px] transition-all cursor-pointer ${
+    `flex items-center gap-2 w-full px-2.5 py-[6px] rounded-lg text-[12.5px] transition-all cursor-pointer ${
       active
-        ? "bg-white/70 text-[#0f172a] font-semibold shadow-xs border border-black/[0.06]"
-        : "text-[#64748b] hover:bg-black/5 hover:text-[#0f172a] font-medium"
+        ? "bg-white text-[#0f172a] font-semibold shadow-xs border border-black/[0.06]"
+        : "text-[#64748b] hover:bg-black/[0.05] hover:text-[#0f172a] font-medium"
     }`;
 
   const subNavItem = (active: boolean) =>
-    `block w-full text-left py-1.5 px-2 text-[12.5px] rounded-lg transition-colors ${
+    `block w-full text-left py-[5px] px-2 text-[12px] rounded-md transition-colors ${
       active ? "text-[#e60067] font-semibold" : "text-[#64748b] hover:text-[#0f172a] font-medium"
     }`;
 
@@ -89,53 +89,67 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen flex bg-[#f5f5f8]">
+    <div className="min-h-screen bg-[#f5f5f8]">
       {/* ================================================================== */}
-      {/* SIDEBAR                                                             */}
+      {/* SIDEBAR — fixed, 168 px, full height                               */}
       {/* ================================================================== */}
       <aside
-        className="w-[220px] flex-shrink-0 flex flex-col"
-        style={{ background: "#f0f0f3", borderRight: "1px solid rgba(0,0,0,0.08)" }}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "168px",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          background: "#f0f0f3",
+          borderRight: "1px solid rgba(0,0,0,0.08)",
+          zIndex: 30,
+          overflowY: "auto",
+          overflowX: "hidden",
+        }}
       >
-        {/* ── top scrollable section ───────────────────────────────────── */}
-        <div className="flex flex-col flex-1 overflow-y-auto p-3 space-y-1">
+        {/* ── top section ───────────────────────────────────── */}
+        <div className="flex flex-col flex-1 p-2.5 space-y-1">
 
           {/* Brand / workspace */}
-          <div className="flex items-center justify-between px-2 py-2 cursor-pointer hover:bg-black/5 rounded-xl mb-1 select-none">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-[#e60067] flex items-center justify-center shadow-sm">
-                <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <div className="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-black/[0.05] rounded-lg mb-0.5 select-none">
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-5 rounded-md bg-[#e60067] flex items-center justify-center shadow-sm flex-shrink-0">
+                <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
               </div>
-              <span className="text-[13px] font-bold text-[#0f172a]">Personal</span>
+              <span className="text-[12.5px] font-bold text-[#0f172a] truncate">Personal</span>
             </div>
-            <svg className="w-3.5 h-3.5 text-[#94a3b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+            <svg className="w-3 h-3 text-[#94a3b8] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </div>
 
           {/* Outbound / Content tabs */}
-          <div className="bg-[#e3e3e8] p-1 rounded-xl flex gap-0.5 mb-2">
+          <div className="bg-[#e3e3e8] p-0.5 rounded-lg flex gap-0.5 mb-1">
             <button
               onClick={() => handleTabChange("outbound")}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-[12px] font-semibold transition-all flex items-center justify-center gap-1 ${
+              className={`flex-1 py-1 px-1.5 rounded-md text-[11.5px] font-semibold transition-all flex items-center justify-center gap-1 ${
                 activeTab === "outbound"
                   ? "bg-white text-[#0f172a] shadow-xs"
                   : "text-[#64748b] hover:text-[#0f172a]"
               }`}
             >
-              🚀 Outbound
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              Outbound
             </button>
             <button
               onClick={() => handleTabChange("content")}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-[12px] font-semibold transition-all flex items-center justify-center gap-1 ${
+              className={`flex-1 py-1 px-1.5 rounded-md text-[11.5px] font-semibold transition-all flex items-center justify-center gap-1 ${
                 activeTab === "content"
                   ? "bg-white text-[#0f172a] shadow-xs"
                   : "text-[#64748b] hover:text-[#0f172a]"
               }`}
             >
-              ✏️ Content
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Content
             </button>
           </div>
 
@@ -182,7 +196,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </button>
 
                 {isSequencingOpen && (
-                  <div className="ml-[26px] border-l border-black/[0.07] pl-3 mt-0.5 space-y-0.5">
+                  <div className="ml-5 border-l border-black/[0.07] pl-2.5 mt-0.5 space-y-0.5">
                     <Link href="/dashboard/campaigns" className={subNavItem(isActive("/dashboard/campaigns"))}>
                       Campaigns
                     </Link>
@@ -219,30 +233,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* ── bottom section ───────────────────────────────────────────── */}
-        <div className="p-3 space-y-2 border-t border-black/[0.07]">
+        <div className="p-2.5 space-y-1.5 border-t border-black/[0.07]">
 
           {/* YOUR RECENT CHATS label */}
-          <button className="flex items-center gap-1 px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-[#94a3b8] hover:text-[#64748b] transition-colors select-none">
+          <button className="flex items-center gap-1 px-1.5 py-0.5 text-[9.5px] uppercase font-bold tracking-wider text-[#94a3b8] hover:text-[#64748b] transition-colors select-none">
             Your recent chats
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </button>
 
-          {/* Recent chat card */}
-          <div className="bg-white rounded-xl border border-black/[0.07] p-3 space-y-2 shadow-xs cursor-pointer hover:border-black/10 transition-colors">
-            <p className="text-[12.5px] font-bold text-[#0f172a] truncate">Smakg Growth Plays</p>
-            <div className="flex items-center justify-between text-[11px] text-[#94a3b8] font-medium">
+          {/* Recent chat / progress card */}
+          <div className="bg-white rounded-xl border border-black/[0.07] p-2.5 space-y-1.5 shadow-xs cursor-pointer hover:border-black/10 transition-colors">
+            <p className="text-[11.5px] font-bold text-[#0f172a] truncate">Smakg Growth Plays</p>
+            <div className="flex items-center justify-between text-[10.5px] text-[#94a3b8] font-medium">
               <span>Get started</span>
               <span className="font-mono">0/5</span>
             </div>
-            <div className="w-full bg-[#e8e8ec] h-1 rounded-full overflow-hidden">
+            <div className="w-full bg-[#e8e8ec] h-[3px] rounded-full overflow-hidden">
               <div className="bg-[#e60067] h-full rounded-full" style={{ width: "20%" }} />
             </div>
           </div>
 
           {/* Utility links */}
-          <div className="space-y-0.5 pt-1">
+          <div className="space-y-0">
             {[
               {
                 label: "Join Slack",
@@ -283,7 +297,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.href}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noreferrer" : undefined}
-                className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[12.5px] font-medium text-[#64748b] hover:text-[#0f172a] hover:bg-black/5 transition-colors"
+                className="flex items-center gap-2 px-2 py-[5px] rounded-lg text-[12px] font-medium text-[#64748b] hover:text-[#0f172a] hover:bg-black/[0.05] transition-colors"
               >
                 {item.icon}
                 {item.label}
@@ -292,15 +306,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           {/* User profile */}
-          <div className="flex items-center justify-between px-2 pt-2 border-t border-black/[0.07]">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-[#0f172a] flex items-center justify-center text-[11px] font-extrabold text-white">
+          <div className="flex items-center justify-between px-1.5 pt-1.5 border-t border-black/[0.07]">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <div className="w-6 h-6 rounded-full bg-[#0f172a] flex items-center justify-center text-[10px] font-extrabold text-white flex-shrink-0">
                 S
               </div>
-              <span className="text-[12.5px] font-semibold text-[#0f172a]">Sourish Kundu</span>
+              <span className="text-[11.5px] font-semibold text-[#0f172a] truncate">Sourish Kundu</span>
             </div>
-            <button className="text-[#94a3b8] hover:text-[#64748b] transition-colors p-1 rounded-lg hover:bg-black/5">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+            <button className="text-[#94a3b8] hover:text-[#64748b] transition-colors p-0.5 rounded-md hover:bg-black/5 flex-shrink-0">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
               </svg>
             </button>
@@ -308,19 +322,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
+
       {/* ================================================================== */}
-      {/* MAIN CONTENT                                                        */}
+      {/* MAIN CONTENT — offset by fixed sidebar                             */}
       {/* ================================================================== */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#f5f5f8] origami-pagoda-bg relative">
+
+      <main
+        className="flex flex-col min-h-screen bg-[#f5f5f8] origami-pagoda-bg"
+        style={{ marginLeft: "168px" }}
+      >
         {/* Header */}
-        <header className="px-8 py-4 flex justify-between items-center">
+        <header className="px-8 py-3.5 flex justify-between items-center sticky top-0 z-20 bg-[#f5f5f8]/80" style={{ backdropFilter: "blur(8px)" }}>
           <span className="text-[13px] font-semibold text-[#0f172a]">{pageTitle()}</span>
           <span className="text-[12px] font-semibold text-[#e60067]">Free plan</span>
         </header>
 
-        <div className="px-8 pb-8 max-w-5xl w-full mx-auto flex-1">{children}</div>
+        <div className="px-8 pb-8 flex-1">{children}</div>
 
-        {/* Floating Intercom-style chat button */}
+        {/* Floating chat button */}
         <div className="fixed bottom-6 right-6 z-40">
           <button className="w-12 h-12 bg-[#0f172a] text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -330,8 +349,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </main>
 
-      {/* ================================================================== */}
-      {/* CONTENT MODAL                                                       */}
       {/* ================================================================== */}
       {isContentModalOpen && (
         <div
