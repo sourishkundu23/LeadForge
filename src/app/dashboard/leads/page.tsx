@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
-interface MockLead {
+interface LeadItem {
   id: string;
   name: string;
   username: string;
@@ -18,127 +19,102 @@ interface MockLead {
   outreach_message: string;
 }
 
-export default function LeadsDatabasePage() {
-  const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
-  const [minScore, setMinScore] = useState<number>(70);
-  const [onlyEmails, setOnlyEmails] = useState<boolean>(false);
-  const [selectedLead, setSelectedLead] = useState<MockLead | null>(null);
-  const [liveLeads, setLiveLeads] = useState<MockLead[]>([]);
+function LeadsDatabaseContent() {
+  const searchParams = useSearchParams();
+  const jobId = searchParams.get("job_id");
 
+  const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
+  const [minScore, setMinScore] = useState<number>(0);
+  const [onlyEmails, setOnlyEmails] = useState<boolean>(false);
+  const [selectedLead, setSelectedLead] = useState<LeadItem | null>(null);
+  const [leads, setLeads] = useState<LeadItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [jobStatus, setJobStatus] = useState<{ status: string; progress: number } | null>(null);
+
+  // Poll job status if a job_id is present in URL
   useEffect(() => {
-    async function fetchLiveLeads() {
+    if (!jobId) return;
+
+    let interval: NodeJS.Timeout;
+
+    async function checkStatus() {
+      try {
+        const res = await fetch(`/api/jobs`, {
+          headers: { Authorization: "Bearer dev-token" },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const currentJob = data.jobs?.find((j: any) => j.id === jobId);
+          if (currentJob) {
+            setJobStatus({ status: currentJob.status, progress: currentJob.progress });
+
+            if (currentJob.status === "completed" || currentJob.status === "failed") {
+              clearInterval(interval);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error polling job status:", err);
+      }
+    }
+
+    checkStatus();
+    interval = setInterval(checkStatus, 3000);
+
+    return () => clearInterval(interval);
+  }, [jobId]);
+
+  // Fetch leads from Supabase API
+  useEffect(() => {
+    async function fetchLeads() {
+      setIsLoading(true);
       try {
         const queryParams = new URLSearchParams({
           min_score: minScore.toString(),
           has_email: onlyEmails.toString(),
           platform: selectedPlatform,
         });
+        if (jobId) queryParams.append("job_id", jobId);
+
         const res = await fetch(`/api/leads?${queryParams.toString()}`, {
           headers: { Authorization: "Bearer dev-token" },
         });
+
         if (res.ok) {
           const data = await res.json();
-          if (data.leads && data.leads.length > 0) {
-            const mapped: MockLead[] = data.leads.map((l: any) => ({
-              id: l.id,
-              name: l.full_name || l.username || "Unknown",
-              username: l.username || "user",
-              platform: l.platform,
-              title: l.title || "Professional",
-              company: l.company || "Company",
-              bio: l.bio || "",
-              email: l.email,
-              email_verified: l.email_verified || false,
-              followers: l.follower_count || 0,
-              score: l.icp_score || 50,
-              ai_summary: l.ai_summary || "Scraped and processed by RAG engine.",
-              outreach_message: l.outreach_message || "Hey! Noticed your profile on " + l.platform + "...",
-            }));
-            setLiveLeads(mapped);
-          }
+          const mapped: LeadItem[] = (data.leads || []).map((l: any) => ({
+            id: l.id,
+            name: l.full_name || l.username || "Lead Profile",
+            username: l.username || "user",
+            platform: l.platform,
+            title: l.title || "Professional",
+            company: l.company || "Company",
+            bio: l.bio || "",
+            email: l.email,
+            email_verified: l.email_verified || false,
+            followers: l.follower_count || 0,
+            score: l.icp_score || 0,
+            ai_summary: l.ai_summary || "Scraped and processed by RAG engine.",
+            outreach_message: l.outreach_message || "Hey! Noticed your profile...",
+          }));
+
+          setLeads(mapped);
         }
-      } catch {
-        // Fallback to mock leads if offline or no DB connection
+      } catch (err) {
+        console.error("Error fetching leads:", err);
+      } finally {
+        setIsLoading(false);
       }
     }
-    fetchLiveLeads();
-  }, [selectedPlatform, minScore, onlyEmails]);
 
-  const mockLeads = [
-    {
-      id: "1",
-      name: "Alex Chen",
-      username: "alexchen_saas",
-      platform: "linkedin",
-      title: "Founder & CEO",
-      company: "TechStartup.io",
-      bio: "🚀 Building the future of B2B SaaS | CEO @TechStartup | Previously @Google | alex@techstartup.io | YC S24",
-      email: "alex@techstartup.io",
-      email_verified: true,
-      followers: 12500,
-      score: 94,
-      ai_summary: "High-intent match. Active SaaS founder currently hiring engineering & sales leads. Clear decision maker with verified contact info.",
-      outreach_message: "Hi Alex, saw your recent post about closing your Series A! Impressive growth at TechStartup.io. Given your focus on scaling sales outreach right now, thought you'd find our RAG lead intelligence engine interesting...",
-    },
-    {
-      id: "2",
-      name: "Sarah Johnson",
-      username: "sarah_growth",
-      platform: "instagram",
-      title: "VP of Marketing",
-      company: "GrowthForge Agency",
-      bio: "📈 Growth Marketing Agency | Helped 200+ SaaS companies scale | Need leads? DM me | sarah@growthengine.co",
-      email: "sarah@growthengine.co",
-      email_verified: true,
-      followers: 8900,
-      score: 89,
-      ai_summary: "Strong fit. Runs a growth agency scaling outbound for SaaS clients. High likelihood of purchasing agency-tier scraping credits.",
-      outreach_message: "Hey Sarah, loved your case study on generating 500 leads in 30 days. As someone scaling growth engines for SaaS clients, you might want to test our multi-platform RAG enrichment tool to double lead quality...",
-    },
-    {
-      id: "3",
-      name: "Marcus Rivera",
-      username: "startup_cto",
-      platform: "twitter",
-      title: "CTO & Co-Founder",
-      company: "InnovateTech AI",
-      bio: "CTO @InnovateTech | Building AI-powered sales tools | Ex-Stripe | marcus@innovatetech.com",
-      email: "marcus@innovatetech.com",
-      email_verified: true,
-      followers: 15400,
-      score: 85,
-      ai_summary: "Solid technical decision maker. Active poster in AI sales tech space. Explicitly looking for higher quality lead pipelines.",
-      outreach_message: "Hey Marcus, resonated with your hot take on lead tools needing higher precision over raw quantity. Built LeadForge specifically with pgvector RAG to solve that context gap...",
-    },
-    {
-      id: "4",
-      name: "Lisa Park",
-      username: "lisa_growth_pro",
-      platform: "twitter",
-      title: "Head of Growth",
-      company: "ScaleUp Global",
-      bio: "Head of Growth @ScaleUp | Speaker | Newsletter: growthweekly.co",
-      email: null,
-      email_verified: false,
-      followers: 23000,
-      score: 74,
-      ai_summary: "Good profile fit but missing direct verified email. High engagement on Twitter lead automation threads.",
-      outreach_message: "Hi Lisa, noticed your thread on LinkedIn & Twitter lead pipelines. Sharing a quick demo of how LeadForge scores profiles automatically using RAG...",
-    },
-  ];
-
-  const allLeads = liveLeads.length > 0 ? liveLeads : mockLeads;
-
-  const filteredLeads = allLeads.filter((lead) => {
-    if (selectedPlatform !== "all" && lead.platform !== selectedPlatform) return false;
-    if (lead.score < minScore) return false;
-    if (onlyEmails && !lead.email) return false;
-    return true;
-  });
+    fetchLeads();
+  }, [jobId, selectedPlatform, minScore, onlyEmails, jobStatus?.status]);
 
   const handleExportCSV = () => {
+    if (leads.length === 0) return alert("No leads to export.");
+
     const csvHeader = "Name,Username,Platform,Title,Company,Email,Verified,Score,AI Summary\n";
-    const csvRows = filteredLeads
+    const csvRows = leads
       .map(
         (l) =>
           `"${l.name}","${l.username}","${l.platform}","${l.title}","${l.company}","${l.email || ""}","${
@@ -157,12 +133,34 @@ export default function LeadsDatabasePage() {
 
   return (
     <div className="space-y-6">
+      {/* Active Job Progress Banner */}
+      {jobStatus && jobStatus.status !== "completed" && jobStatus.status !== "failed" && (
+        <div className="bg-gradient-to-r from-violet-900/40 to-indigo-900/40 border border-violet-500/30 rounded-2xl p-6 space-y-3">
+          <div className="flex justify-between items-center text-sm font-medium">
+            <span className="flex items-center gap-2 text-violet-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              Status: <strong className="capitalize text-white">{jobStatus.status}...</strong>
+            </span>
+            <span className="font-mono text-violet-400 font-bold">{jobStatus.progress}% Complete</span>
+          </div>
+          <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-violet-500 via-indigo-500 to-emerald-400 h-full transition-all duration-500"
+              style={{ width: `${Math.max(jobStatus.progress, 15)}%` }}
+            />
+          </div>
+          <p className="text-xs text-white/50">
+            Apify scraper is extracting profiles & Gemini RAG is scoring ICP alignment in real-time.
+          </p>
+        </div>
+      )}
+
       {/* Top Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">Leads Database</h1>
           <p className="text-sm text-white/50">
-            {filteredLeads.length} enriched leads matching current filters.
+            {leads.length} real scraped leads from database matching filters.
           </p>
         </div>
 
@@ -221,77 +219,95 @@ export default function LeadsDatabasePage() {
 
       {/* Leads Table */}
       <div className="bg-[#12121a] border border-white/5 rounded-2xl overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-[#0d0d15] text-white/40 border-b border-white/5 text-xs">
-              <tr>
-                <th className="py-3.5 px-6 font-medium">Lead Profile</th>
-                <th className="py-3.5 px-4 font-medium">Role & Company</th>
-                <th className="py-3.5 px-4 font-medium">Platform</th>
-                <th className="py-3.5 px-4 font-medium">Contact</th>
-                <th className="py-3.5 px-4 font-medium">ICP Match</th>
-                <th className="py-3.5 px-6 text-right font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {filteredLeads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500/20 to-indigo-500/20 flex items-center justify-center text-sm font-bold text-violet-400">
-                        {lead.name[0]}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-white">{lead.name}</p>
-                        <p className="text-xs text-white/40">@{lead.username}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-4 text-white/80">
-                    <p className="text-xs font-medium">{lead.title}</p>
-                    <p className="text-[11px] text-white/40">{lead.company}</p>
-                  </td>
-                  <td className="py-4 px-4 capitalize text-xs text-white/60">
-                    {lead.platform === "linkedin" && "💼 LinkedIn"}
-                    {lead.platform === "instagram" && "📸 Instagram"}
-                    {lead.platform === "twitter" && "🐦 Twitter"}
-                  </td>
-                  <td className="py-4 px-4 text-xs font-mono">
-                    {lead.email ? (
-                      <div className="flex items-center gap-1.5 text-emerald-400">
-                        <span>{lead.email}</span>
-                        {lead.email_verified && <span className="text-[10px] bg-emerald-500/20 px-1 rounded">✓</span>}
-                      </div>
-                    ) : (
-                      <span className="text-white/20">No email found</span>
-                    )}
-                  </td>
-                  <td className="py-4 px-4">
-                    <span
-                      className={`inline-block px-2.5 py-1 rounded text-xs font-mono font-bold ${
-                        lead.score >= 90
-                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                          : lead.score >= 80
-                          ? "bg-violet-500/20 text-violet-400 border border-violet-500/30"
-                          : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                      }`}
-                    >
-                      {lead.score} / 100
-                    </span>
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <button
-                      onClick={() => setSelectedLead(lead)}
-                      className="text-xs bg-violet-600/20 text-violet-400 hover:bg-violet-600 hover:text-white px-3 py-1.5 rounded-lg border border-violet-500/30 transition-all"
-                    >
-                      View AI Insights
-                    </button>
-                  </td>
+        {isLoading ? (
+          <div className="p-12 text-center text-white/40 space-y-2">
+            <svg className="animate-spin h-6 w-6 mx-auto text-violet-400" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <p className="text-sm">Fetching leads from Supabase database...</p>
+          </div>
+        ) : leads.length === 0 ? (
+          <div className="p-12 text-center space-y-3">
+            <p className="text-4xl">🔍</p>
+            <p className="text-lg font-semibold text-white">No leads found in database yet</p>
+            <p className="text-sm text-white/40 max-w-md mx-auto">
+              Launch a new scrape job above to target Instagram, LinkedIn, or Twitter profiles with live Gemini RAG scoring.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-[#0d0d15] text-white/40 border-b border-white/5 text-xs">
+                <tr>
+                  <th className="py-3.5 px-6 font-medium">Lead Profile</th>
+                  <th className="py-3.5 px-4 font-medium">Role & Company</th>
+                  <th className="py-3.5 px-4 font-medium">Platform</th>
+                  <th className="py-3.5 px-4 font-medium">Contact</th>
+                  <th className="py-3.5 px-4 font-medium">ICP Match</th>
+                  <th className="py-3.5 px-6 text-right font-medium">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {leads.map((lead) => (
+                  <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500/20 to-indigo-500/20 flex items-center justify-center text-sm font-bold text-violet-400">
+                          {lead.name[0]}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white">{lead.name}</p>
+                          <p className="text-xs text-white/40">@{lead.username}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-white/80">
+                      <p className="text-xs font-medium">{lead.title}</p>
+                      <p className="text-[11px] text-white/40">{lead.company}</p>
+                    </td>
+                    <td className="py-4 px-4 capitalize text-xs text-white/60">
+                      {lead.platform === "linkedin" && "💼 LinkedIn"}
+                      {lead.platform === "instagram" && "📸 Instagram"}
+                      {lead.platform === "twitter" && "🐦 Twitter"}
+                    </td>
+                    <td className="py-4 px-4 text-xs font-mono">
+                      {lead.email ? (
+                        <div className="flex items-center gap-1.5 text-emerald-400">
+                          <span>{lead.email}</span>
+                          {lead.email_verified && <span className="text-[10px] bg-emerald-500/20 px-1 rounded">✓</span>}
+                        </div>
+                      ) : (
+                        <span className="text-white/20">No email found</span>
+                      )}
+                    </td>
+                    <td className="py-4 px-4">
+                      <span
+                        className={`inline-block px-2.5 py-1 rounded text-xs font-mono font-bold ${
+                          lead.score >= 80
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                            : lead.score >= 50
+                            ? "bg-violet-500/20 text-violet-400 border border-violet-500/30"
+                            : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                        }`}
+                      >
+                        {lead.score} / 100
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <button
+                        onClick={() => setSelectedLead(lead)}
+                        className="text-xs bg-violet-600/20 text-violet-400 hover:bg-violet-600 hover:text-white px-3 py-1.5 rounded-lg border border-violet-500/30 transition-all"
+                      >
+                        View AI Insights
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* AI Lead Detail Modal */}
@@ -317,7 +333,7 @@ export default function LeadsDatabasePage() {
 
             {/* AI Summary */}
             <div className="bg-white/[0.02] border border-white/5 rounded-xl p-4 space-y-2">
-              <span className="text-xs font-mono text-emerald-400 uppercase font-semibold">RAG Fit Intelligence</span>
+              <span className="text-xs font-mono text-emerald-400 uppercase font-semibold">Gemini RAG Fit Intelligence</span>
               <p className="text-sm text-white/80 leading-relaxed">{selectedLead.ai_summary}</p>
             </div>
 
@@ -344,5 +360,13 @@ export default function LeadsDatabasePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function LeadsDatabasePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white/40">Loading Leads Database...</div>}>
+      <LeadsDatabaseContent />
+    </Suspense>
   );
 }
