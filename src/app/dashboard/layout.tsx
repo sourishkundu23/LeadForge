@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className={`min-h-screen flex selection:bg-rose-500/20 selection:text-rose-600 ${isDarkMode ? "dark bg-[#0d0d12] text-white" : "bg-[#f8f8fb] text-[#1a1a24]"}`}>
       {/* Origami Left Sidebar — 100% Identical to Image 3 */}
-      <aside className="w-64 origami-sidebar flex flex-col justify-between p-4 flex-shrink-0 select-none transition-colors">
+      <aside className="w-64 bg-[#f4f4f7] dark:bg-[#111118] border-r border-black/10 dark:border-white/10 flex flex-col justify-between p-4 flex-shrink-0 select-none transition-colors">
         <div className="space-y-4">
           {/* Top Brand & Workspace Switcher */}
           <div className="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors">
@@ -33,29 +33,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
               </div>
-              <span className="text-sm font-bold text-[var(--text-main)]">Personal</span>
+              <span className="text-sm font-extrabold text-[#1a1a24] dark:text-white">Personal</span>
             </div>
-            <span className="text-[var(--text-sub)] text-xs">▾</span>
+            <span className="text-[#64748b] dark:text-white/60 text-xs font-bold">▾</span>
           </div>
 
           {/* Outbound / Content Segmented Pill Switcher */}
-          <div className="origami-tab-track p-1 rounded-xl flex">
+          <div className="bg-[#e3e3e8] dark:bg-[#181824] p-1 rounded-xl flex border border-black/5 dark:border-white/10">
             <button
               onClick={() => setActiveTab("outbound")}
-              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "outbound"
-                  ? "origami-tab-active"
-                  : "text-[var(--text-sub)] hover:text-[var(--text-main)]"
+                  ? "bg-white dark:bg-[#252536] text-[#1a1a24] dark:text-white shadow-xs border border-black/5"
+                  : "text-[#64748b] dark:text-white/60 hover:text-[#1a1a24] dark:hover:text-white"
               }`}
             >
               <span>🚀</span> Outbound
             </button>
             <button
               onClick={() => setActiveTab("content")}
-              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "content"
-                  ? "origami-tab-active"
-                  : "text-[var(--text-sub)] hover:text-[var(--text-main)]"
+                  ? "bg-white dark:bg-[#252536] text-[#1a1a24] dark:text-white shadow-xs border border-black/5"
+                  : "text-[#64748b] dark:text-white/60 hover:text-[#1a1a24] dark:hover:text-white"
               }`}
             >
               <span>📝</span> Content
@@ -65,9 +65,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* + New Chat Action Button */}
           <Link
             href="/dashboard/new"
-            className="w-full flex items-center justify-center gap-2 origami-new-chat-btn font-semibold py-2.5 px-4 rounded-xl text-sm transition-all shadow-xs"
+            className="w-full flex items-center justify-center gap-2 bg-[#e3e3e8] hover:bg-[#dcdce1] dark:bg-[#1c1c2b] dark:hover:bg-[#252538] text-[#1a1a24] dark:text-white font-bold py-2.5 px-4 rounded-xl border border-black/5 dark:border-white/10 text-sm transition-all shadow-xs"
           >
-            <span className="text-[#e60067] text-base">+</span>
+            <span className="text-[#e60067] font-extrabold text-base">+</span>
             <span>New chat</span>
           </Link>
 
@@ -75,24 +75,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <nav className="space-y-1 pt-1">
             <Link
               href="/dashboard/leads"
-              className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+              className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                 pathname === "/dashboard/leads"
-                  ? "bg-rose-500/10 text-[#e60067] font-semibold border border-rose-500/20"
-                  : "text-[var(--text-sub)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--text-main)]"
+                  ? "bg-rose-500/10 text-[#e60067] font-bold border border-rose-500/20"
+                  : "text-[#64748b] dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#1a1a24] dark:hover:text-white"
               }`}
             >
               <div className="flex items-center gap-2.5">
                 <span className="text-sm">💬</span> All chats
               </div>
-              <span className="bg-black/5 dark:bg-white/10 text-[var(--text-sub)] text-[10px] px-1.5 py-0.5 rounded-full font-mono">12</span>
+              <span className="bg-black/5 dark:bg-white/10 text-[#64748b] dark:text-white/60 text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">12</span>
             </Link>
 
             <Link
               href="/dashboard/icps"
-              className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+              className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                 pathname === "/dashboard/icps"
-                  ? "bg-rose-500/10 text-[#e60067] font-semibold border border-rose-500/20"
-                  : "text-[var(--text-sub)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--text-main)]"
+                  ? "bg-rose-500/10 text-[#e60067] font-bold border border-rose-500/20"
+                  : "text-[#64748b] dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#1a1a24] dark:hover:text-white"
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -104,39 +104,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div>
               <button
                 onClick={() => setIsSequencingOpen(!isSequencingOpen)}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-[var(--text-sub)] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[var(--text-main)] transition-all"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-[#64748b] dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#1a1a24] dark:hover:text-white transition-all"
               >
                 <div className="flex items-center gap-2.5">
                   <span className="text-sm">⚡</span> Sequencing
                 </div>
-                <span className="text-[10px] text-[var(--text-sub)]">{isSequencingOpen ? "▾" : "▸"}</span>
+                <span className="text-[10px] text-[#64748b] dark:text-white/60">{isSequencingOpen ? "▾" : "▸"}</span>
               </button>
 
               {isSequencingOpen && (
-                <div className="ml-6 border-l border-[var(--border)] pl-3 py-1 space-y-1 text-xs">
+                <div className="ml-6 border-l border-black/10 dark:border-white/10 pl-3 py-1 space-y-1 text-xs">
                   <Link
                     href="/dashboard"
                     className={`block py-1.5 px-2 rounded-lg transition-colors ${
-                      pathname === "/dashboard" ? "text-[#e60067] font-semibold" : "text-[var(--text-sub)] hover:text-[var(--text-main)]"
+                      pathname === "/dashboard" ? "text-[#e60067] font-bold" : "text-[#64748b] dark:text-white/70 hover:text-[#1a1a24] dark:hover:text-white"
                     }`}
                   >
                     Campaigns
                   </Link>
                   <Link
                     href="/dashboard/leads"
-                    className="block py-1.5 px-2 text-[var(--text-sub)] hover:text-[var(--text-main)] transition-colors"
+                    className="block py-1.5 px-2 text-[#64748b] dark:text-white/70 hover:text-[#1a1a24] dark:hover:text-white transition-colors"
                   >
                     Inbox
                   </Link>
                   <Link
                     href="/dashboard/leads"
-                    className="block py-1.5 px-2 text-[var(--text-sub)] hover:text-[var(--text-main)] transition-colors"
+                    className="block py-1.5 px-2 text-[#64748b] dark:text-white/70 hover:text-[#1a1a24] dark:hover:text-white transition-colors"
                   >
                     Senders
                   </Link>
                   <Link
                     href="/dashboard"
-                    className="block py-1.5 px-2 text-[var(--text-sub)] hover:text-[var(--text-main)] transition-colors"
+                    className="block py-1.5 px-2 text-[#64748b] dark:text-white/70 hover:text-[#1a1a24] dark:hover:text-white transition-colors"
                   >
                     Analytics
                   </Link>
@@ -147,17 +147,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Origami Bottom Sidebar Section */}
-        <div className="space-y-3 border-t border-[var(--border)] pt-3">
+        <div className="space-y-3 border-t border-black/10 dark:border-white/10 pt-3">
           <div className="px-2">
-            <span className="text-[10px] uppercase font-bold text-[var(--text-sub)] tracking-wider">YOUR RECENT CHATS ▾</span>
+            <span className="text-[10px] uppercase font-extrabold text-[#8e8e93] dark:text-white/40 tracking-wider">YOUR RECENT CHATS ▾</span>
           </div>
 
           {/* Smakg Growth Plays Card */}
-          <div className="origami-card rounded-xl p-3 space-y-2 shadow-xs">
+          <div className="bg-white dark:bg-[#161622] text-[#1a1a24] dark:text-white border border-black/10 dark:border-white/10 rounded-xl p-3 space-y-2 shadow-xs">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-bold text-[var(--text-main)]">Smakg Growth Plays</span>
+              <span className="font-extrabold text-[#1a1a24] dark:text-white">Smakg Growth Plays</span>
             </div>
-            <div className="flex justify-between items-center text-[11px] text-[var(--text-sub)] font-medium">
+            <div className="flex justify-between items-center text-[11px] text-[#64748b] dark:text-white/60 font-semibold">
               <span>Get started</span>
               <span className="font-mono">0/5</span>
             </div>
@@ -166,27 +166,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
 
-          <div className="space-y-1 text-xs text-[var(--text-sub)] font-medium">
-            <a href="https://slack.com" target="_blank" rel="noreferrer" className="flex items-center gap-2.5 px-2 py-1.5 hover:text-[var(--text-main)] transition-colors">
+          <div className="space-y-1 text-xs text-[#64748b] dark:text-white/70 font-semibold">
+            <a href="https://slack.com" target="_blank" rel="noreferrer" className="flex items-center gap-2.5 px-2 py-1.5 hover:text-[#1a1a24] dark:hover:text-white transition-colors">
               <span>#</span> Join Slack
             </a>
-            <a href="#learn" className="flex items-center gap-2.5 px-2 py-1.5 hover:text-[var(--text-main)] transition-colors">
+            <a href="#learn" className="flex items-center gap-2.5 px-2 py-1.5 hover:text-[#1a1a24] dark:hover:text-white transition-colors">
               <span>📖</span> Learn
             </a>
-            <a href="#settings" className="flex items-center gap-2.5 px-2 py-1.5 hover:text-[var(--text-main)] transition-colors">
+            <a href="#settings" className="flex items-center gap-2.5 px-2 py-1.5 hover:text-[#1a1a24] dark:hover:text-white transition-colors">
               <span>⚙️</span> Settings
             </a>
           </div>
 
           {/* User Profile Pill */}
-          <div className="flex items-center justify-between px-2 pt-2 border-t border-[var(--border)]">
+          <div className="flex items-center justify-between px-2 pt-2 border-t border-black/10 dark:border-white/10">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-full bg-[#e60067] flex items-center justify-center text-xs font-bold text-white shadow-md">
                 S
               </div>
-              <span className="text-xs font-bold text-[var(--text-main)]">Sourish Kundu</span>
+              <span className="text-xs font-extrabold text-[#1a1a24] dark:text-white">Sourish Kundu</span>
             </div>
-            <span className="text-[var(--text-sub)] text-xs cursor-pointer hover:text-[var(--text-main)]">🔒</span>
+            <span className="text-[#64748b] dark:text-white/60 text-xs cursor-pointer hover:text-[#1a1a24] dark:hover:text-white">🔒</span>
           </div>
         </div>
       </aside>
@@ -210,20 +210,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
 
         <header className="px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-xs text-[var(--text-sub)]">
-            <span className="text-[var(--text-main)] font-semibold">Dashboard</span>
+          <div className="flex items-center gap-2 text-xs text-[#64748b] dark:text-white/60">
+            <span className="text-[#1a1a24] dark:text-white font-semibold">Dashboard</span>
           </div>
 
           <div className="flex items-center gap-3">
             {/* Dark / Light Mode Toggle */}
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="bg-white dark:bg-white/10 text-xs px-3.5 py-1.5 rounded-full border border-[var(--border)] font-semibold text-[var(--text-main)] shadow-xs hover:scale-105 transition-transform"
+              className="bg-white dark:bg-white/10 text-xs px-3.5 py-1.5 rounded-full border border-black/10 dark:border-white/10 font-semibold text-[#1a1a24] dark:text-white shadow-xs hover:scale-105 transition-transform"
             >
               {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
 
-            <span className="bg-white dark:bg-white/10 text-[var(--text-sub)] text-xs px-3.5 py-1.5 rounded-full border border-[var(--border)] font-semibold shadow-xs">
+            <span className="bg-white dark:bg-white/10 text-[#64748b] dark:text-white/60 text-xs px-3.5 py-1.5 rounded-full border border-black/10 dark:border-white/10 font-semibold shadow-xs">
               Free plan
             </span>
           </div>
