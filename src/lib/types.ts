@@ -162,6 +162,9 @@ export interface Lead {
     url?: string;
   }>;
   raw_data: Record<string, unknown>;
+
+  // Vector Embedding for RAG
+  embedding?: number[];
   
   // Status
   is_favorite: boolean;

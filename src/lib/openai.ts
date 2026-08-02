@@ -1,7 +1,9 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+const apiKey = process.env.OPENAI_API_KEY || 'placeholder-openai-key';
+
+export const openai = new OpenAI({
+  apiKey,
 });
 
 /**
@@ -35,7 +37,6 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 export async function enrichLeadWithAI(
   leadContext: string,
   icpDescription: string,
-  userName?: string,
 ): Promise<{
   icp_score: number;
   ai_summary: string;
@@ -149,5 +150,3 @@ export function buildLeadContext(lead: {
 
   return parts.join('\n');
 }
-
-export { openai };
